@@ -6,7 +6,7 @@ const User = {
 
 		try {
 			const results = await pool.query(sql);
-			console.log('All users: ', results);
+			console.log('All users: ', results.rows);
 			return results;
 		} catch (err) {
 			console.error('Error in getUsers:', err);
