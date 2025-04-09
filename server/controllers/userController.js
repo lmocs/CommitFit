@@ -1,10 +1,9 @@
 const User = require('../services/userService');
-// const db = require('../config/db');
 
 getUsers = async (req, res) => {
 	try {
 		const users = await User.getUsers();
-		res.json(users);
+		res.json(users.rows);
 	} catch (err) {
 		console.error('Retrieval Error:', err);
 		res.status(500).json({ error: 'Failed to get users' });
