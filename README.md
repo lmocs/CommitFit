@@ -1,4 +1,4 @@
-# Outline for Development
+## Outline for Development
 
 **Frontend:**
 - react / next.js
@@ -7,13 +7,13 @@
 - node.js / express.js
 - google maps API for validation
 
-- solidity smart contract:
+- solidity smart contract
   - hardhat
   - ethers.js integration
 
 **Database:**
 - postgreSQL 
-  - deployed onto AWS?
+  - neon
 
 ---
 
