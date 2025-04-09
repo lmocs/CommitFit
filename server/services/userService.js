@@ -1,11 +1,11 @@
-const db = require('../config/db');
+const { pool } = require('../config/db');
 
 const User = {
 	getUsers: async () => {
 		const sql = `SELECT * FROM users`;
 
 		try {
-			const results = await db.query(sql);
+			const results = await pool.query(sql);
 			console.log('All users: ', results);
 			return results;
 		} catch (err) {
@@ -19,7 +19,7 @@ const User = {
 		const values = [userData.wallet_address, userData.username];
 
 		try {
-			const results = await db.query(sql, values);
+			const results = await pool.query(sql, values);
 			return results;
 		} catch (err) {
 			console.error('Error in addUser:', err);
