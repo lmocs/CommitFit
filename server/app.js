@@ -1,13 +1,13 @@
-const { pool } = require('./config/db');
+const express = require("express");
+const app = express();
+const userRoutes = require("./routes/userRoutes");
 
-async function getPgVersion() {
-	const client = await pool.connect();
-	try {
-		const result = await client.query('SELECT version()');
-		console.log(result.rows[0]);
-	} finally {
-		client.release();
-	}
-}
+const PORT = 3000;
+const HOST = '0.0.0.0';
 
-getPgVersion();
+app.use(express.json());
+app.use('/api/users', userRoutes)
+
+app.listen(PORT, HOST, () => {
+	console.log(`Server running on http://${HOST}:${PORT}`);
+});
