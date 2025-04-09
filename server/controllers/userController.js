@@ -1,6 +1,6 @@
-const User = require('../services/userService');
+import User from '../services/userService.js';
 
-getUsers = async (req, res) => {
+const getUsers = async (req, res) => {
 	try {
 		const users = await User.getUsers();
 		res.json(users.rows);
@@ -10,7 +10,7 @@ getUsers = async (req, res) => {
 	}
 };
 
-addUser = async (req, res) => {
+const addUser = async (req, res) => {
 	try {
 		const userData = req.body;
 		await User.addUser(userData);
@@ -21,7 +21,4 @@ addUser = async (req, res) => {
 	}
 };
 
-module.exports = {
-	getUsers,
-	addUser,
-};
+export default { getUsers, addUser };

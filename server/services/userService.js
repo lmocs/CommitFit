@@ -1,4 +1,4 @@
-const { pool } = require('../config/db');
+import pool from '../config/db.js';
 
 const User = {
 	getUsers: async () => {
@@ -29,4 +29,4 @@ const User = {
 	},
 };
 
-module.exports = User;
+export default User;
