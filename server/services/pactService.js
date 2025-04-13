@@ -14,13 +14,13 @@ const Pact = {
 		}
 	},
 
-	getPactByUserIds: async (userData) => {
+	getPactByUserIds: async (pactData) => {
 		const sql = `
 			SELECT * FROM pacts
 			WHERE (user1_id = $1 AND user2_id = $2)
-				OR (user1_id = $1 AND user2_id = $2);
+				OR (user1_id = $2 AND user2_id = $1);
 		`;
-		const values = [userData.user1_id, userData.user2_id];
+		const values = [pactData.user1_id, pactData.user2_id];
 
 		try {
 			const results = await pool.query(sql, values);
@@ -32,7 +32,7 @@ const Pact = {
 		}
 	},
 
-	createPact: async (userData) => {
+	createPact: async (pactData) => {
 		const sql = `
 			INSERT INTO pacts (
 				user1_id,
@@ -46,12 +46,12 @@ const Pact = {
 		`;
 
 		const values = [
-			userData.user1_id,
-			userData.user2_id,
-			userData.start_date,
-			userData.end_date,
-			userData.stake_amount,
-			userData.contract_address
+			pactData.user1_id,
+			pactData.user2_id,
+			pactData.start_date,
+			pactData.end_date,
+			pactData.stake_amount,
+			pactData.contract_address
 		];
 
 		try {
