@@ -14,16 +14,16 @@ const User = {
 		}
 	},
 
-	addUser: async (userData) => {
+	createUser: async (userData) => {
 		const sql = `INSERT INTO users (wallet_address, username) VALUES ($1, $2) RETURNING *`;
 		const values = [userData.wallet_address, userData.username];
 
 		try {
 			const results = await pool.query(sql, values);
-			console.log('Added: ', results.rows);
+			console.log('Created: ', results.rows);
 			return results;
 		} catch (err) {
-			console.error('Error in addUser:', err);
+			console.error('Error in createUser:', err);
 			throw err;
 		}
 	},

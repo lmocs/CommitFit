@@ -10,15 +10,15 @@ const getUsers = async (req, res) => {
 	}
 };
 
-const addUser = async (req, res) => {
+const createUser = async (req, res) => {
 	try {
 		const userData = req.body;
-		await User.addUser(userData);
-		res.json({ message: 'User added successfully' });
+		await User.createUser(userData);
+		res.json({ message: 'User created successfully' });
 	} catch (err) {
-		console.error('Insert Error:', err);
-		res.status(500).json({ error: 'Failed to insert user' });
+		console.error('createUser Error:', err);
+		res.status(500).json({ error: 'Failed to create user' });
 	}
 };
 
-export default { getUsers, addUser };
+export default { getUsers, createUser };
