@@ -13,6 +13,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import IconButtons from './IconButton';
 
 function createData(buddyName, startDate, endDate, daysRemaining, stakeAmount, currentEarnings) {
 	return {
@@ -69,6 +70,9 @@ function Row(props) {
 				<TableCell align="right">{row.daysRemaining}</TableCell>
 				<TableCell align="right">{row.stakeAmount}</TableCell>
 				<TableCell align="right">{row.currentEarnings}</TableCell>
+				<TableCell>
+					<IconButtons size="small" />
+				</TableCell>
 			</TableRow>
 			<TableRow>
 				<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
@@ -127,7 +131,8 @@ Row.propTypes = {
 };
 
 const rows = [
-	createData('Byron', '2025-04-14', '2025-05-14', '3/30', 30, 3)
+	createData('Byron', '2025-04-14', '2025-05-14', '3/30', 30, 3),
+	createData('Logan', '2025-06-28', '2025-07-28', '15/30', 100, 30)
 ];
 
 export default function CollapsibleTable() {

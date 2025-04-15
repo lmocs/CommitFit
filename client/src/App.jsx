@@ -1,6 +1,7 @@
 import CreatePact from './pages/CreatePact.jsx';
 import ViewAllPacts from './pages/ViewAllPacts.jsx';
 import CollapsibleTable from './components/CollapsibleTable.jsx';
+import IconButtons from './components/IconButton.jsx';
 import './App.css'
 
 function App() {
@@ -8,7 +9,9 @@ function App() {
     <main>
       <CreatePact />
       <ViewAllPacts />
-      <CollapsibleTable />
+      <div>
+        <CollapsibleTable />
+      </div>
     </main>
   );
 }
