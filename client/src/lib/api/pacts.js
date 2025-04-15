@@ -1,5 +1,11 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
+export const getGyms = async () => {
+	const res = await fetch(`${API_URL}/pacts/all`);
+	if (!res.ok) throw new Error('Failed to get all pacts');
+	return res.json();
+}
+
 export const createPact = async (pactData) => {
 	const res = await fetch(`${API_URL}/pacts/create`, {
 		method: 'POST',

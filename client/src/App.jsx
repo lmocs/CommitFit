@@ -1,10 +1,14 @@
 import CreatePact from './pages/CreatePact.jsx';
+import ViewAllPacts from './pages/ViewAllPacts.jsx';
+import CollapsibleTable from './components/CollapsibleTable.jsx';
 import './App.css'
 
 function App() {
   return (
     <main>
       <CreatePact />
+      <ViewAllPacts />
+      <CollapsibleTable />
     </main>
   );
 }
