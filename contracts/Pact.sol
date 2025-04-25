@@ -5,13 +5,12 @@ contract Pact {
   address public owner;
   address public partner;
   uint256 pool;
-  uint256 deadline; // the day the pact terminates
+  uint256 startDate;
+  uint256 endDate;
   uint256 ownersEarnings;
   uint256 partnersEarnings;
 
-  enum PactState = { Active, Completed }
-
-  PactState public state;
+  mapping(address => mapping(uint256 => bool)) checkIns;
 
   constructor(
     address _owner,
@@ -22,7 +21,8 @@ contract Pact {
     owner = _owner;
     partner = _partner;
     pool = _wager * 2; // initialized pool consists of equal contribution from both users
-    deadline = block.timestamp + (_durationInDays * 1 days);
+    startDate = ((block.timestamp / 1 days) + 1) * 1 days;
+    endDate = startDate + (_durationInDays * 1 days);
     ownersEarnings = 0;
     partnersEarnings = 0;
   }
@@ -32,21 +32,40 @@ contract Pact {
     _;
   }
 
-  function checkAndUpdatePactState() internal {
-    if (state == PactState.Active) {
-      state = block.timestamp >= deadline ? PactState.Completed : PactState.Active;
-    }
+  modifier hasStarted() {
+    require(block.timestamp >= startDate, "The pact has not begun yet.");
+    _;
   }
+
+  modifier notEnded() {
+    require(block.timestamp < endDate, "The pact has ended.");
+    _;
+  }
+
+  modifier hasEnded() {
+    require(block.timestamp >= endDate, "The pact has not ended.");
 
   // blindly check in the user; location validation will happen off-chain (JS)
-  function checkInUser() public onlyParticipants {
+  function recordUserCheckIn() public onlyParticipants hasStarted notEnded {
     // TODO: write this function
+    uint256 currentDay = (block.timestamp - startDate) / 1 days;
+    checkIns[msg.sender][currentDay] = true;
   }
 
-  function withdraw() public onlyParticipants {
-    checkAndUpdatePactState();
-    require(state == PactState.Completed, "The pact is still in progress; cannot withdraw");
-    
+  function withdraw() public onlyParticipants hasEnded {
     // TODO: continue writing function to draw from only from respective participants' earnings
+  }
+
+  function calculateEarnings() internal hasEnded { 
+     // TODO: write this function                   
+   }                                                
+
+  // return information for tracking the relative progress of the Pact
+  function getCheckInStats() public view returns (
+    uint256 totalDaysElapsed,
+    uint256 ownerCheckIns,
+    uint256 partnerCheckIns
+  ) {
+    // TODO: Write this function
   }
 }
