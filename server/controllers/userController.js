@@ -1,5 +1,16 @@
 import User from '../services/userService.js';
 
+const checkUser = async (req, res) => {
+	try {
+		const userData = req.body;
+		await User.checkUser(userData);
+		res.status(200).json({ success: true });
+	} catch (err) {
+		console.error('Check Error: ', err);
+		res.status(500).json({ error: 'Failed to create user' });
+	}
+}
+
 const getUsers = async (req, res) => {
 	try {
 		const users = await User.getUsers();
@@ -21,4 +32,4 @@ const createUser = async (req, res) => {
 	}
 };
 
-export default { getUsers, createUser };
+export default { checkUser, getUsers, createUser };
