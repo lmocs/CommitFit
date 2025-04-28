@@ -1,4 +1,4 @@
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../context/WalletContext';
 
 const ConnectWalletButton = () => {
   const { walletAddress, connectWallet, error } = useWallet();

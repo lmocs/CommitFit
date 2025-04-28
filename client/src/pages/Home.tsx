@@ -1,4 +1,4 @@
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../context/WalletContext';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
