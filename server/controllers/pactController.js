@@ -10,26 +10,26 @@ const getAllPacts = async (req, res) => {
 	}
 };
 
-const getPactByUserIds = async (req, res) => {
-	try {
-		const pactData = req.params;
-		const pact = await Pact.getPactByUserIds(pactData);
-		res.json(pact.rows);
-	} catch (err) {
-		console.error('Retrieval Error:', err);
-		res.status(500).json({ error: 'Failed to get this pact' });
-	}
-};
-
 const createPact = async (req, res) => {
 	try {
 		const pactData = req.body;
-		await Pact.createPact(pactData);
-		res.json({ message: 'Pact added successfully' });
+		const created = await Pact.createPact(pactData);
+		res.json(created);
 	} catch (err) {
 		console.error('Insert Error:', err);
 		res.status(500).json({ error: 'Failed to insert pact' });
 	}
 };
 
-export default { getAllPacts, getPactByUserIds, createPact };
+const getPactsByWallet = async (req, res) => {
+	try {
+		const { wallet_address } = req.params;
+		const pacts = await Pact.getPactsByWallet(wallet_address);
+		res.json(pacts.rows);
+	} catch (err) {
+		console.error('Retrieval Error:', err);
+		res.status(500).json({ error: 'Failed to get pacts by wallet' });
+	}
+};
+
+export default { getAllPacts, createPact, getPactsByWallet };
