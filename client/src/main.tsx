@@ -5,11 +5,14 @@ import App from './App.tsx'
 import '@mantine/core/styles.css';
 
 import { MantineProvider } from '@mantine/core';
+import { WalletProvider } from './context/WalletContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider defaultColorScheme={'dark'}>
-      <App />
-    </MantineProvider>
+    <WalletProvider>
+      <MantineProvider defaultColorScheme={'dark'}>
+        <App />
+      </MantineProvider>
+    </WalletProvider>
   </StrictMode>,
 )

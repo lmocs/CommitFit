@@ -1,11 +1,22 @@
 import { Container, Flex, Stack, Text, Card, Button } from '@mantine/core';
 import PactCard from '../components/PactCard';
+import { useWallet } from '../context/WalletContext';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const { disconnectWallet } = useWallet();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    disconnectWallet();
+    navigate('/');
+  };
+
   return (
     <Container size="lg" mt="xl">
       <Text size="xl" fw={700}>Welcome, Alex Johnson!</Text>
       <Text size="sm" c="dimmed" p={20}>🔥 12 Day Streak • 💎 1.45 ETH Earned</Text>
+      <button onClick={handleLogout}>Log Out</button>
 
       <Flex gap="xl" align="flex-start">
         {/* Left Column */}
