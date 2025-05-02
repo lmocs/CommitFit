@@ -24,12 +24,9 @@ const Dashboard = () => {
   };
 
   const fetchPacts = async () => {
-    console.log('fetchPacts');
     if (!walletAddress) return;
     try {
-      console.log("before pactsData:", walletAddress);
       const pactsData = await getPactsByUser(walletAddress);
-      console.log("Pacts for wallet:", walletAddress, pactsData);
       setPacts(pactsData);
     } catch (err) {
       console.error('Failed to fetch pacts:', err);
@@ -54,10 +51,6 @@ const Dashboard = () => {
         <Stack w="70%">
           {pacts.length > 0 ? (
             pacts.map((pact) => {
-              { console.log('pacts: ', pacts) }
-              { console.log('pact: ', pact) }
-              { console.log('user1_name: ', pact.user1_name) }
-              { console.log('user2_name: ', pact.user2_name) }
               const partnerName =
                 pact.user1_id === walletAddress
                   ? pact.user2_name || pact.user2_id
