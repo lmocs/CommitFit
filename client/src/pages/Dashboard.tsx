@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react';
 
 import PactCard from '../components/PactCard';
 import { useWallet } from '../context/WalletContext';
-import { getPactsByUser } from '../lib/api/pact';
+import { getPactsByUser, deletePact } from '../lib/api/pact';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -33,6 +33,14 @@ const Dashboard = () => {
     }
   };
 
+  const handleDeletePact = async (id: number) => {
+    try {
+      await deletePact(id);
+      fetchPacts(); // Refresh pacts
+    } catch (err) {
+      console.error('Failed to delete pact:', err);
+    }
+  };
   useEffect(() => {
     fetchPacts();
   }, [walletAddress]);
@@ -59,14 +67,16 @@ const Dashboard = () => {
               return (
                 <PactCard
                   key={pact.id}
+                  id={pact.id}
                   partnerName={partnerName}
                   startDate={pact.start_date}
                   endDate={pact.end_date}
                   pot={pact.stake_amount}
                   yourStreak={0}
                   partnerStreak={0}
-                  yourCheckins={[]} // for now
-                  partnerCheckins={[]} // for now
+                  yourCheckins={[]}
+                  partnerCheckins={[]}
+                  onDelete={handleDeletePact}
                 />
               );
             })
