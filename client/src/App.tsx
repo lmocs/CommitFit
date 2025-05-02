@@ -1,9 +1,10 @@
-import './App.css'
+import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import CreatePact from './pages/CreatePact';
+import AddGym from './pages/AddGym';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -24,6 +25,14 @@ function App() {
           element={
             <ProtectedRoute>
               <CreatePact />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/add-gym"
+          element={
+            <ProtectedRoute>
+              <AddGym />
             </ProtectedRoute>
           }
         />
