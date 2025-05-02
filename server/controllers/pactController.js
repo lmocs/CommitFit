@@ -32,4 +32,15 @@ const getPactsByWallet = async (req, res) => {
 	}
 };
 
-export default { getAllPacts, createPact, getPactsByWallet };
+const deletePact = async (req, res) => {
+	try {
+		const { id } = req.params;
+		const deleted = await Pact.deletePact(id);
+		res.json(deleted);
+	} catch (err) {
+		console.error('Delete error:', err);
+		res.status(500).json({ error: 'Failed to delete pact' });
+	}
+};
+
+export default { getAllPacts, createPact, getPactsByWallet, deletePact };

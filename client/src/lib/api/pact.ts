@@ -16,3 +16,12 @@ export const getPactsByUser = async (walletAddress: string) => {
 	if (!res.ok) throw new Error('Failed to fetch pacts');
 	return res.json();
 };
+
+export const deletePact = async (id: number) => {
+	const res = await fetch(`${API_URL}/pacts/${id}`, {
+		method: 'DELETE',
+	});
+
+	if (!res.ok) throw new Error('Failed to delete pact');
+	return res.json();
+};

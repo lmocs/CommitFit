@@ -15,16 +15,16 @@ const Pact = {
 
 	createPact: async (pactData) => {
 		const sql = `
-      INSERT INTO pacts (
-        user1_id,
-        user2_id,
-        start_date,
-        end_date,
-        stake_amount,
-        contract_address
-      ) VALUES ($1, $2, $3, $4, $5, $6)
-      RETURNING *;
-    `;
+			INSERT INTO pacts (
+				user1_id,
+				user2_id,
+				start_date,
+				end_date,
+				stake_amount,
+				contract_address
+			) VALUES ($1, $2, $3, $4, $5, $6)
+			RETURNING *;
+		`;
 		const values = [
 			pactData.user1_id,
 			pactData.user2_id,
@@ -64,6 +64,20 @@ const Pact = {
 			return result;
 		} catch (err) {
 			console.error('Error in getPactsByWallet:', err);
+			throw err;
+		}
+	},
+
+	deletePact: async (id) => {
+		const sql = `DELETE FROM pacts WHERE id = $1 RETURNING *;`;
+		const values = [id];
+
+		try {
+			const result = await pool.query(sql, values);
+			console.log('Deleted pact:', result.rows[0]);
+			return result.rows[0];
+		} catch (err) {
+			console.error('Error in deletePact:', err);
 			throw err;
 		}
 	}

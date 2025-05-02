@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 type CheckinStatus = 'success' | 'fail' | 'none';
 
 interface PactCardProps {
+  id: number;
   partnerName: string;
   startDate: string;
   endDate: string;
@@ -26,6 +27,7 @@ interface PactCardProps {
   pot: number;
   yourCheckins: CheckinStatus[];
   partnerCheckins: CheckinStatus[];
+  onDelete: (id: number) => void;
 }
 
 const CheckinDot = ({ status }: { status: CheckinStatus }) => {
@@ -34,6 +36,7 @@ const CheckinDot = ({ status }: { status: CheckinStatus }) => {
 };
 
 const PactCard = ({
+  id,
   partnerName,
   startDate,
   endDate,
@@ -42,6 +45,7 @@ const PactCard = ({
   pot,
   yourCheckins,
   partnerCheckins,
+  onDelete,
 }: PactCardProps) => {
   const navigate = useNavigate();
 
@@ -111,7 +115,20 @@ const PactCard = ({
         <Button size="xs" variant="light" color="grape" onClick={() => navigate('/checkin')}>
           Check In
         </Button>
+        <Button
+          size="xs"
+          color="red"
+          variant="outline"
+          onClick={() => {
+            if (window.confirm("Are you sure you want to delete this pact?")) {
+              onDelete(id);
+            }
+          }}
+        >
+          Delete
+        </Button>
       </Group>
+
     </Card>
   );
 };
