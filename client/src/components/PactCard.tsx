@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  Divider,
   Flex,
   Group,
   Progress,
@@ -13,6 +12,8 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { IconCalendar, IconTrophy } from '@tabler/icons-react';
+
+import { useNavigate } from 'react-router-dom';
 
 type CheckinStatus = 'success' | 'fail' | 'none';
 
@@ -42,19 +43,21 @@ const PactCard = ({
   yourCheckins,
   partnerCheckins,
 }: PactCardProps) => {
-  const totalStreak = yourStreak + partnerStreak;
+  const navigate = useNavigate();
+
+  const totalStreak = yourStreak + partnerStreak || 1; // prevent divide-by-zero
   const yourPercent = (yourStreak / totalStreak) * 100;
   const partnerPercent = 100 - yourPercent;
 
   return (
     <Card withBorder radius="md" p="lg" shadow="sm">
       {/* Header */}
-      <Group position="apart" mb="md">
+      <Group justify="space-between" mb="md">
         <Group>
           <Avatar radius="xl" />
-          <Stack spacing={0}>
-            <Text weight={600}>Pact with {partnerName}</Text>
-            <Group spacing={4} c="dimmed">
+          <Stack gap={0}>
+            <Text fw={600}>Pact with {partnerName}</Text>
+            <Group gap={4} c="dimmed">
               <IconCalendar size={14} />
               <Text size="xs">
                 {startDate} – {endDate}
@@ -66,8 +69,8 @@ const PactCard = ({
       </Group>
 
       {/* Progress Winnings */}
-      <Stack spacing={4} mb="sm">
-        <Group spacing={4}>
+      <Stack gap={4} mb="sm">
+        <Group gap={4}>
           <IconTrophy size={14} />
           <Text size="sm">Potential Winnings</Text>
         </Group>
@@ -82,8 +85,8 @@ const PactCard = ({
       </Stack>
 
       {/* Last 7 Days Check-ins */}
-      <Stack spacing="xs" mt="md">
-        <Text size="xs" weight={500}>
+      <Stack gap="xs" mt="md">
+        <Text size="xs" fw={500}>
           Last 7 Days
         </Text>
         <Flex justify="space-between">
@@ -103,11 +106,9 @@ const PactCard = ({
       </Stack>
 
       {/* Actions */}
-      <Group mt="lg" position="apart">
-        <Text size="xs" variant="link">
-          Show History
-        </Text>
-        <Button size="xs" variant="light" color="grape">
+      <Group mt="lg" justify="space-between">
+        <Button size="xs" variant="subtle" onClick={() => navigate('/history')}>Show History</Button>
+        <Button size="xs" variant="light" color="grape" onClick={() => navigate('/checkin')}>
           Check In
         </Button>
       </Group>
@@ -116,4 +117,3 @@ const PactCard = ({
 };
 
 export default PactCard;
-
