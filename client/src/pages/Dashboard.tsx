@@ -3,13 +3,13 @@ import {
   Flex,
   Stack,
   Text,
-  Card,
   Button,
 } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 import PactCard from '../components/PactCard';
+import DashboardActionCard from '../components/DashboardActionCard';
 import { useWallet } from '../context/WalletContext';
 import { getPactsByUser, deletePact } from '../lib/api/pact';
 
@@ -87,17 +87,21 @@ const Dashboard = () => {
 
         {/* Right Column */}
         <Stack w="33%">
-          <Card withBorder p="lg">
-            <Text>➕ Create a Pact</Text>
-            <Text size="xs" c="dimmed" mt={4}>
-              Start a new accountability pact with ETH stakes.
-            </Text>
-            <Button fullWidth mt="sm" color="grape" onClick={() => navigate('/create')}>
-              Start New Pact
-            </Button>
-          </Card>
+          <DashboardActionCard
+            title="➕ Create a Pact"
+            description="Start a new accountability pact with ETH stakes."
+            buttonLabel="Start New Pact"
+            buttonColor="grape"
+            onClick={() => navigate('/create')}
+          />
 
-          {/* Other Cards (History, Gym, Notifications) can go here */}
+          <DashboardActionCard
+            title="📍 Add a Gym"
+            description="Search for your gym using Google Maps."
+            buttonLabel="Add Gym"
+            buttonColor="green"
+            onClick={() => navigate('/add-gym')}
+          />
         </Stack>
       </Flex>
     </Container>
