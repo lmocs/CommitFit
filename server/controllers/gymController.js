@@ -14,7 +14,7 @@ const createGym = async (req, res) => {
 	try {
 		const gymData = req.body;
 		await Gym.createGym(gymData);
-		res.json({ message: 'Gym created successfully' });
+		res.json({ message: 'Gym added and linked to user' });
 	} catch (err) {
 		console.error('createGym Error:', err);
 		res.status(500).json({ error: 'Failed to create gym' });
