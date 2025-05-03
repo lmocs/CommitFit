@@ -1,83 +1,88 @@
 import {
-  Button,
-  Container,
-  Stack,
-  Text,
-  Title,
-  Loader,
-} from '@mantine/core';
-import { useEffect, useRef, useState } from 'react';
+  APIProvider,
+  Map,
+  MapControl,
+  ControlPosition,
+  AdvancedMarker,
+  useAdvancedMarkerRef,
+} from '@vis.gl/react-google-maps';
+import { Button, Container, Flex, Loader, Stack, Text, Title } from '@mantine/core';
+import { useState } from 'react';
 import { useWallet } from '../context/WalletContext';
-import { loadGoogleMapsApi } from '../lib/utils/loadGoogleMaps';
 import { addGym } from '../lib/api/gym';
+import PlaceAutocomplete from '../components/PlaceAutocomplete';
+
+const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
 
 const AddGym = () => {
   const { walletAddress } = useWallet();
-  const placeRef = useRef<HTMLDivElement>(null);
-  const [gymInfo, setGymInfo] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const initAutocomplete = async () => {
-      try {
-        await loadGoogleMapsApi(import.meta.env.VITE_GOOGLE_PLACES_API_KEY);
-        if (!placeRef.current) return;
-
-        const el = document.createElement('gmp-place-autocomplete');
-        el.setAttribute('style', 'width: 100%; max-width: 100%;');
-        el.setAttribute('input-placeholder', 'Search your gym...');
-
-        el.addEventListener('gmp-placechange', (event: any) => {
-          const place = event.detail;
-          if (!place || !place.location || !place.id || !place.displayName?.text || !place.formattedAddress) return;
-
-          setGymInfo({
-            name: place.displayName.text,
-            address: place.formattedAddress,
-            place_id: place.id,
-            lat: place.location.latitude,
-            lng: place.location.longitude,
-          });
-        });
-
-        placeRef.current.appendChild(el);
-      } catch (err) {
-        console.error('Failed to initialize Google Maps:', err);
-      }
-    };
-
-    initAutocomplete();
-  }, []);
+  const [markerRef, marker] = useAdvancedMarkerRef();
+  const [place, setPlace] = useState<google.maps.places.PlaceResult | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!gymInfo || !walletAddress) return;
-    setLoading(true);
+    if (!walletAddress || !place?.geometry?.location || !place.place_id || !place.name || !place.formatted_address) {
+      alert('Please select a valid gym from the map search.');
+      return;
+    }
+
+    const lat = place.geometry.location.lat();
+    const lng = place.geometry.location.lng();
+
+    setSubmitting(true);
     try {
-      await addGym({ ...gymInfo, user_id: walletAddress });
+      await addGym({
+        user_id: walletAddress,
+        name: place.name,
+        address: place.formatted_address,
+        place_id: place.place_id,
+        lat,
+        lng,
+      });
       alert('Gym added successfully!');
-      setGymInfo(null);
-      if (placeRef.current) placeRef.current.innerHTML = '';
+      setPlace(null);
     } catch (err) {
       console.error('Failed to add gym:', err);
-      alert('Failed to add gym');
+      alert('Error adding gym.');
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   return (
-    <Container size="sm" mt="xl">
-      <Stack spacing="lg">
-        <Title order={2}>📍 Add a New Gym</Title>
-        <Text size="sm" c="dimmed">
-          Use Google Maps to search for your gym location. Once selected, click "Add Gym" to save it.
-        </Text>
-        <div ref={placeRef} style={{ width: '100%' }}></div>
-        <Button fullWidth onClick={handleSubmit} disabled={!gymInfo || loading} color="green">
-          {loading ? <Loader size="xs" color="white" /> : 'Add Gym'}
-        </Button>
-      </Stack>
-    </Container>
+    <APIProvider apiKey={apiKey} libraries={['places']}>
+      <Container size="sm" mt="xl">
+        <Stack spacing="lg">
+          <Title order={2}>📍 Add Your Gym</Title>
+
+          <Text size="sm" c="dimmed">
+            Register your gym location to enable automatic check-ins.
+          </Text>
+
+          {/* Search Input */}
+          <PlaceAutocomplete onPlaceSelect={setPlace} />
+
+          {/* Map below the search */}
+          <Map
+            mapId={mapId}
+            defaultZoom={4}
+            defaultCenter={{ lat: 39.8283, lng: -98.5795 }}
+            style={{ width: '100%', height: 400, borderRadius: 8 }}
+            disableDefaultUI={false}
+            gestureHandling="greedy"
+          >
+            <AdvancedMarker ref={markerRef} position={null} />
+          </Map>
+
+          {/* Submit Button */}
+          <Button fullWidth color="green" onClick={handleSubmit} disabled={!place || submitting}>
+            {submitting ? <Loader size="xs" color="white" /> : '✅ Register This Gym'}
+          </Button>
+        </Stack>
+      </Container>
+    </APIProvider>
+
   );
 };
 
