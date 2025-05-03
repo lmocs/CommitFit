@@ -1,13 +1,12 @@
 import {
   APIProvider,
   Map,
-  MapControl,
-  ControlPosition,
   AdvancedMarker,
   useAdvancedMarkerRef,
 } from '@vis.gl/react-google-maps';
-import { Button, Container, Flex, Loader, Stack, Text, Title } from '@mantine/core';
+import { Button, Container, Loader, Stack, Text, Title } from '@mantine/core';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 import { addGym } from '../lib/api/gym';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
@@ -16,6 +15,7 @@ const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const mapId = import.meta.env.VITE_GOOGLE_MAPS_ID;
 
 const AddGym = () => {
+  const navigate = useNavigate();
   const { walletAddress } = useWallet();
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [place, setPlace] = useState<google.maps.places.PlaceResult | null>(null);
@@ -42,6 +42,7 @@ const AddGym = () => {
       });
       alert('Gym added successfully!');
       setPlace(null);
+      navigate('/dashboard');
     } catch (err) {
       console.error('Failed to add gym:', err);
       alert('Error adding gym.');
@@ -60,13 +61,11 @@ const AddGym = () => {
             Register your gym location to enable automatic check-ins.
           </Text>
 
-          {/* Search Input */}
           <PlaceAutocomplete onPlaceSelect={setPlace} />
 
-          {/* Map below the search */}
           <Map
             mapId={mapId}
-            defaultZoom={4}
+            defaultZoom={5}
             defaultCenter={{ lat: 39.8283, lng: -98.5795 }}
             style={{ width: '100%', height: 400, borderRadius: 8 }}
             disableDefaultUI={false}
@@ -75,15 +74,14 @@ const AddGym = () => {
             <AdvancedMarker ref={markerRef} position={null} />
           </Map>
 
-          {/* Submit Button */}
           <Button fullWidth color="green" onClick={handleSubmit} disabled={!place || submitting}>
             {submitting ? <Loader size="xs" color="white" /> : '✅ Register This Gym'}
           </Button>
         </Stack>
       </Container>
     </APIProvider>
-
   );
 };
 
 export default AddGym;
+
