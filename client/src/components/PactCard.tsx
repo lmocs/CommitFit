@@ -10,10 +10,13 @@ import {
   Stack,
   Text,
   Tooltip,
+  Loader,
 } from '@mantine/core';
 import { IconCalendar, IconTrophy } from '@tabler/icons-react';
-
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { submitCheckin } from '../lib/api/checkin';
+import { useWallet } from '../context/WalletContext';
 
 type CheckinStatus = 'success' | 'fail' | 'none';
 
@@ -27,7 +30,6 @@ interface PactCardProps {
   pot: number;
   yourCheckins: CheckinStatus[];
   partnerCheckins: CheckinStatus[];
-  onDelete: (id: number) => void;
 }
 
 const CheckinDot = ({ status }: { status: CheckinStatus }) => {
@@ -45,13 +47,43 @@ const PactCard = ({
   pot,
   yourCheckins,
   partnerCheckins,
-  onDelete,
 }: PactCardProps) => {
   const navigate = useNavigate();
+  const { walletAddress } = useWallet();
+  const [checkedIn, setCheckedIn] = useState(false);
+  const [checkingIn, setCheckingIn] = useState(false);
 
   const totalStreak = yourStreak + partnerStreak || 1; // prevent divide-by-zero
   const yourPercent = (yourStreak / totalStreak) * 100;
   const partnerPercent = 100 - yourPercent;
+
+  const handleCheckin = () => {
+    if (!navigator.geolocation || !walletAddress) return;
+    setCheckingIn(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          await submitCheckin({
+            user_address: walletAddress,
+            pact_id: id,
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+          setCheckedIn(true);
+        } catch (err: any) {
+          alert(err.message);
+        } finally {
+          setCheckingIn(false);
+        }
+      },
+      (err) => {
+        alert('Failed to get location');
+        console.error('Check in error: ', err);
+        setCheckingIn(false);
+      }
+    );
+  };
 
   return (
     <Card withBorder radius="md" p="lg" shadow="sm">
@@ -90,9 +122,7 @@ const PactCard = ({
 
       {/* Last 7 Days Check-ins */}
       <Stack gap="xs" mt="md">
-        <Text size="xs" fw={500}>
-          Last 7 Days
-        </Text>
+        <Text size="xs" fw={500}>Last 7 Days</Text>
         <Flex justify="space-between">
           {yourCheckins.map((status, i) => (
             <Tooltip key={i} label="You">
@@ -112,23 +142,16 @@ const PactCard = ({
       {/* Actions */}
       <Group mt="lg" justify="space-between">
         <Button size="xs" variant="subtle" onClick={() => navigate('/history')}>Show History</Button>
-        <Button size="xs" variant="light" color="grape" onClick={() => navigate('/checkin')}>
-          Check In
-        </Button>
         <Button
           size="xs"
-          color="red"
-          variant="outline"
-          onClick={() => {
-            if (window.confirm("Are you sure you want to delete this pact?")) {
-              onDelete(id);
-            }
-          }}
+          variant="light"
+          color={checkedIn ? 'gray' : 'grape'}
+          disabled={checkedIn || checkingIn}
+          onClick={handleCheckin}
         >
-          Delete
+          {checkingIn ? <Loader size="xs" /> : checkedIn ? '✅ Checked In!' : 'Check In'}
         </Button>
       </Group>
-
     </Card>
   );
 };
