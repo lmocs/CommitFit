@@ -50,7 +50,11 @@ const Checkin = {
 		);
 
 		if (checkExisting.rows.length > 0) {
-			throw new Error('Already checked in for this pact today.');
+			return {
+				alreadyCheckedIn: true,
+				is_valid: checkExisting.rows[0].is_valid,
+				...checkExisting.rows[0],
+			};
 		}
 
 		// 4. Insert check-in
