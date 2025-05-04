@@ -9,6 +9,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
 import { addGym } from '../lib/api/gym';
+import BackToDashboard from '../components/BackToDashboard';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -53,6 +54,7 @@ const AddGym = () => {
 
   return (
     <APIProvider apiKey={apiKey} libraries={['places']}>
+      <BackToDashboard />
       <Container size="sm" mt="xl">
         <Stack spacing="lg">
           <Title order={2}>📍 Add Your Gym</Title>

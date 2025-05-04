@@ -11,6 +11,7 @@ import { useState } from 'react';
 import { useWallet } from '../context/WalletContext';
 import { useNavigate } from 'react-router-dom';
 import { createPact } from '../lib/api/pact';
+import BackToDashboard from '../components/BackToDashboard';
 
 const CreatePact = () => {
   const { walletAddress } = useWallet();
@@ -42,6 +43,7 @@ const CreatePact = () => {
 
   return (
     <Container size="sm" mt="xl">
+      <BackToDashboard />
       <Text size="xl" fw={700} mb="md">Create a New Pact</Text>
       <Stack>
         <TextInput
