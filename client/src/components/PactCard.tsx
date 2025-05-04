@@ -14,8 +14,8 @@ import {
 } from '@mantine/core';
 import { IconCalendar, IconTrophy } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { submitCheckin } from '../lib/api/checkin';
+import { useEffect, useState } from 'react';
+import { submitCheckin, getCheckinStatus } from '../lib/api/checkin';
 import { useWallet } from '../context/WalletContext';
 
 type CheckinStatus = 'success' | 'fail' | 'none';
@@ -59,6 +59,19 @@ const PactCard = ({
   const yourPercent = (yourStreak / totalStreak) * 100;
   const partnerPercent = 100 - yourPercent;
 
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (!walletAddress) return;
+      try {
+        const result = await getCheckinStatus(walletAddress, id);
+        setCheckedIn(result.checkedIn);
+      } catch (err) {
+        console.error('Failed to fetch check-in status:', err);
+      }
+    };
+    checkStatus();
+  }, [walletAddress, id]);
+
   const handleCheckin = () => {
     if (!navigator.geolocation || !walletAddress) return;
     setCheckingIn(true);
@@ -66,13 +79,18 @@ const PactCard = ({
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         try {
-          await submitCheckin({
-            user_address: walletAddress,
+          const result = await submitCheckin({
+            wallet_address: walletAddress,
             pact_id: id,
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
           });
-          setCheckedIn(true);
+
+          if (result.is_valid) {
+            setCheckedIn(true);
+          } else {
+            alert('You must be within 100m of your registered gym to check in.');
+          }
         } catch (err: any) {
           alert(err.message);
         } finally {
@@ -156,7 +174,6 @@ const PactCard = ({
           >
             {checkingIn ? <Loader size="xs" /> : checkedIn ? '✅ Checked In!' : 'Check In'}
           </Button>
-          {/* <Tooltip label="Delete Pact" withArrow> </Tooltip> */}
           <Button
             size="xs"
             variant="subtle"
@@ -171,7 +188,7 @@ const PactCard = ({
           </Button>
         </Group>
       </Group>
-    </Card >
+    </Card>
   );
 };
 

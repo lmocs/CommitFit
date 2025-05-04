@@ -3,6 +3,7 @@ import pool from '../config/db.js';
 const Checkin = {
 	createCheckin: async ({ wallet_address, pact_id, lat, lng }) => {
 		// 1. Get all gyms linked to this user
+		console.log('Looking up gyms for wallet:', wallet_address);
 		const gymQuery = `
 			SELECT g.lat, g.lng FROM user_gyms ug
 			JOIN gyms g ON ug.gym_id = g.id 
@@ -35,10 +36,16 @@ const Checkin = {
 			}
 		}
 
-		// 3. Check if user has already checked in for this pact today
-		const today = new Date().toISOString().split('T')[0];
+		// 3. Get today's date using Postgres' local date
+		const todayResult = await pool.query(`SELECT CURRENT_DATE`);
+		const today = todayResult.rows[0].current_date;
+
+		// 4. Check if user already checked in
 		const checkExisting = await pool.query(
-			`SELECT * FROM checkins WHERE wallet_address = $1 AND pact_id = $2 AND checkin_date = $3`,
+			`SELECT * FROM checkins
+			WHERE wallet_address = $1
+			AND pact_id = $2
+			AND checkin_date = $3`,
 			[wallet_address, pact_id, today]
 		);
 
