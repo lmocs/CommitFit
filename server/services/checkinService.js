@@ -4,10 +4,10 @@ const Checkin = {
 	createCheckin: async ({ wallet_address, pact_id, lat, lng }) => {
 		// 1. Get all gyms linked to this user
 		const gymQuery = `
-      SELECT g.lat, g.lng FROM user_gyms ug
-      JOIN gyms g ON ug.gym_id = g.id
-      WHERE ug.wallet_address = $1;
-    `;
+			SELECT g.lat, g.lng FROM user_gyms ug
+			JOIN gyms g ON ug.gym_id = g.id 
+			WHERE ug.wallet_address = $1;
+		`;
 		const gyms = await pool.query(gymQuery, [wallet_address]);
 
 		if (gyms.rows.length === 0) {
@@ -49,8 +49,7 @@ const Checkin = {
 		// 4. Insert check-in
 		const insert = await pool.query(
 			`INSERT INTO checkins (wallet_address, pact_id, checkin_date, location_lat, location_lng, is_valid)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *;`,
+			VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
 			[wallet_address, pact_id, today, lat, lng, withinRange]
 		);
 
