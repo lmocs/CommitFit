@@ -102,6 +102,14 @@ const Dashboard = () => {
             buttonColor="green"
             onClick={() => navigate('/add-gym')}
           />
+
+          <DashboardActionCard
+            title="📁 View All Pacts"
+            description="See your past and present accountability pacts."
+            buttonLabel="View History"
+            buttonColor="blue"
+            onClick={() => navigate('/history')}
+          />
         </Stack>
       </Flex>
     </Container>
