@@ -43,12 +43,12 @@ const Gym = {
 
 			// Link gym to user in user_gyms
 			await pool.query(
-				`INSERT INTO user_gyms (user_id, gym_id)
-				VALUES ($1, $2) ON CONFLICT DO NOTHING`,
-				[gymData.user_id, gymId]
+				`INSERT INTO user_gyms (wallet_address, gym_id)
+				VALUES ($1, $2)`,
+				[gymData.wallet_address, gymId]
 			);
 
-			console.log('Gym linked to user:', gymData.user_id, gymId);
+			console.log('Gym linked to user:', gymData.wallet_address, gymId);
 			return { success: true };
 		} catch (err) {
 			console.error('Error in createGym:', err);
