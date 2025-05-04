@@ -30,6 +30,7 @@ interface PactCardProps {
   pot: number;
   yourCheckins: CheckinStatus[];
   partnerCheckins: CheckinStatus[];
+  onDelete: (id: number) => void;
 }
 
 const CheckinDot = ({ status }: { status: CheckinStatus }) => {
@@ -47,6 +48,7 @@ const PactCard = ({
   pot,
   yourCheckins,
   partnerCheckins,
+  onDelete,
 }: PactCardProps) => {
   const navigate = useNavigate();
   const { walletAddress } = useWallet();
@@ -141,18 +143,35 @@ const PactCard = ({
 
       {/* Actions */}
       <Group mt="lg" justify="space-between">
-        <Button size="xs" variant="subtle" onClick={() => navigate('/history')}>Show History</Button>
-        <Button
-          size="xs"
-          variant="light"
-          color={checkedIn ? 'gray' : 'grape'}
-          disabled={checkedIn || checkingIn}
-          onClick={handleCheckin}
-        >
-          {checkingIn ? <Loader size="xs" /> : checkedIn ? '✅ Checked In!' : 'Check In'}
+        <Button size="xs" variant="subtle" onClick={() => navigate('/history')}>
+          Show History
         </Button>
+        <Group>
+          <Button
+            size="xs"
+            variant="light"
+            color={checkedIn ? 'gray' : 'grape'}
+            disabled={checkedIn || checkingIn}
+            onClick={handleCheckin}
+          >
+            {checkingIn ? <Loader size="xs" /> : checkedIn ? '✅ Checked In!' : 'Check In'}
+          </Button>
+          {/* <Tooltip label="Delete Pact" withArrow> </Tooltip> */}
+          <Button
+            size="xs"
+            variant="subtle"
+            color="red"
+            onClick={() => {
+              if (confirm('Are you sure you want to delete this pact?')) {
+                onDelete(id);
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </Group>
       </Group>
-    </Card>
+    </Card >
   );
 };
 

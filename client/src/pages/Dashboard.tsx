@@ -36,7 +36,7 @@ const Dashboard = () => {
   const handleDeletePact = async (id: number) => {
     try {
       await deletePact(id);
-      fetchPacts(); // Refresh pacts
+      fetchPacts();
     } catch (err) {
       console.error('Failed to delete pact:', err);
     }
