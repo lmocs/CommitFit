@@ -54,6 +54,7 @@ const PactCard = ({
   const { walletAddress } = useWallet();
   const [checkedIn, setCheckedIn] = useState(false);
   const [checkingIn, setCheckingIn] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState(true);
 
   const totalStreak = yourStreak + partnerStreak || 1; // prevent divide-by-zero
   const yourPercent = (yourStreak / totalStreak) * 100;
@@ -67,6 +68,8 @@ const PactCard = ({
         setCheckedIn(result.checkedIn);
       } catch (err) {
         console.error('Failed to fetch check-in status:', err);
+      } finally {
+        setLoadingStatus(false); // ✅ mark as loaded
       }
     };
     checkStatus();
@@ -86,7 +89,10 @@ const PactCard = ({
             lng: pos.coords.longitude,
           });
 
-          if (result.is_valid) {
+          if (result.alreadyCheckedIn) {
+            setCheckedIn(result.is_valid);
+            alert('Already checked in today!');
+          } else if (result.is_valid) {
             setCheckedIn(true);
           } else {
             alert('You must be within 100m of your registered gym to check in.');
@@ -114,7 +120,7 @@ const PactCard = ({
           <Stack gap={0}>
             <Text fw={600}>Pact with {partnerName}</Text>
             <Group gap={4} c="dimmed">
-              <IconCalendar size={14} />
+              <IconCalendar size={8} />
               <Text size="xs">
                 {startDate} – {endDate}
               </Text>
@@ -169,10 +175,12 @@ const PactCard = ({
             size="xs"
             variant="light"
             color={checkedIn ? 'gray' : 'grape'}
-            disabled={checkedIn || checkingIn}
+            disabled={checkedIn || checkingIn || loadingStatus}
             onClick={handleCheckin}
           >
-            {checkingIn ? <Loader size="xs" /> : checkedIn ? '✅ Checked In!' : 'Check In'}
+            {checkingIn || loadingStatus ? (
+              <Loader size="xs" />
+            ) : checkedIn ? '✅ Checked In!' : 'Check In'}
           </Button>
           <Button
             size="xs"
