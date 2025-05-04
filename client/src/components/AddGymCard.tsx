@@ -52,7 +52,7 @@ const AddGymCard = () => {
     if (!gymInfo || !walletAddress) return;
     setLoading(true);
     try {
-      await addGym({ ...gymInfo, user_id: walletAddress });
+      await addGym({ ...gymInfo, wallet_address: walletAddress });
       alert('Gym added successfully!');
       setGymInfo(null);
       if (containerRef.current) containerRef.current.innerHTML = '';

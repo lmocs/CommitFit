@@ -33,7 +33,7 @@ const AddGym = () => {
     setSubmitting(true);
     try {
       await addGym({
-        user_id: walletAddress,
+        wallet_address: walletAddress,
         name: place.name,
         address: place.formatted_address,
         place_id: place.place_id,

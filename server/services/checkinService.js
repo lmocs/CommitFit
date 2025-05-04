@@ -1,14 +1,14 @@
 import pool from '../config/db.js';
 
 const Checkin = {
-	createCheckin: async ({ user_id, pact_id, lat, lng }) => {
+	createCheckin: async ({ wallet_address, pact_id, lat, lng }) => {
 		// 1. Get all gyms linked to this user
 		const gymQuery = `
       SELECT g.lat, g.lng FROM user_gyms ug
       JOIN gyms g ON ug.gym_id = g.id
-      WHERE ug.user_id = $1;
+      WHERE ug.wallet_address = $1;
     `;
-		const gyms = await pool.query(gymQuery, [user_id]);
+		const gyms = await pool.query(gymQuery, [wallet_address]);
 
 		if (gyms.rows.length === 0) {
 			throw new Error('No gyms linked to this user.');
@@ -38,8 +38,8 @@ const Checkin = {
 		// 3. Check if user has already checked in for this pact today
 		const today = new Date().toISOString().split('T')[0];
 		const checkExisting = await pool.query(
-			`SELECT * FROM checkins WHERE user_id = $1 AND pact_id = $2 AND checkin_date = $3`,
-			[user_id, pact_id, today]
+			`SELECT * FROM checkins WHERE wallet_address = $1 AND pact_id = $2 AND checkin_date = $3`,
+			[wallet_address, pact_id, today]
 		);
 
 		if (checkExisting.rows.length > 0) {
@@ -48,10 +48,10 @@ const Checkin = {
 
 		// 4. Insert check-in
 		const insert = await pool.query(
-			`INSERT INTO checkins (user_id, pact_id, checkin_date, location_lat, location_lng, is_valid)
+			`INSERT INTO checkins (wallet_address, pact_id, checkin_date, location_lat, location_lng, is_valid)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *;`,
-			[user_id, pact_id, today, lat, lng, withinRange]
+			[wallet_address, pact_id, today, lat, lng, withinRange]
 		);
 
 		return insert.rows[0];
