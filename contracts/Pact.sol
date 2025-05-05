@@ -16,12 +16,13 @@ contract Pact {
   mapping(address => bool) hasWithdrawn;
 
   constructor(
+    address _appOwner,
     address _user1,
     address _user2,
     uint256 _wager,
     uint256 _durationInDays
-  ) {
-    factoryOwner = msg.sender;
+  ) payable {
+    factoryOwner = _appOwner;
     user1 = _user1;
     user2 = _user2;
     pool = _wager * 2; // initialized pool consists of equal contribution from both users
