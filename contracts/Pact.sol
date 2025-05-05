@@ -15,7 +15,7 @@ contract Pact {
   constructor(
     address _owner,
     address _partner,
-    uitn256 _wager,
+    uint256 _wager,
     uint256 _durationInDays
   ) {
     owner = _owner;
@@ -44,6 +44,8 @@ contract Pact {
 
   modifier hasEnded() {
     require(block.timestamp >= endDate, "The pact has not ended.");
+    _;
+  }
 
   // blindly check in the user; location validation will happen off-chain (JS)
   function recordUserCheckIn() public onlyParticipants hasStarted notEnded {
