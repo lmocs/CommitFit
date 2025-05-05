@@ -13,6 +13,7 @@ contract Pact {
   bool earningsCalculated;
 
   mapping(address => mapping(uint256 => bool)) checkIns;
+  mapping(address => bool) hasWithdrawn;
 
   constructor(
     address _user1,
@@ -71,7 +72,27 @@ contract Pact {
   }
 
   function withdraw() public onlyParticipants hasEnded {
-    // TODO: continue writing function to draw from only from respective participants' earnings
+    require(!hasWithdrawn[msg.sender], "This user has already withdrawn.");
+
+    if (!earningsCalculated) {
+      calculateEarnings();
+    }
+
+    uint256 amount;
+
+    // select correctly the amount to withdraw (based on address)
+    if (msg.sender == user1) {
+      amount = ownersEarnings;
+    } else {
+      amount = partnersEarnings;
+    }
+
+    // perform the withdraw
+    (bool success, ) = payable(msg.sender).call{value: amount}("");
+    require(success, "Transfer failed.");
+
+    // update mapping so user cannot withdraw multiple times
+    hasWithdrawn[msg.sender] = true;
   }
 
   function calculateEarnings() internal hasEnded { 
