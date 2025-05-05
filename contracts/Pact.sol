@@ -155,4 +155,7 @@ contract Pact {
 
     return (totalDaysElapsed, ownerCheckIns, partnerCheckIns);
   }
+
+  // allow these contracts to hold ETH
+  receive() external payable {}
 }
