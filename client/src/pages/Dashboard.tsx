@@ -76,10 +76,7 @@ const Dashboard = () => {
                   partnerStreak={0}
                   yourCheckins={[]}
                   partnerCheckins={[]}
-<<<<<<< HEAD
                   onDelete={handleDeletePact}
-=======
->>>>>>> 59876e8 (Create `AddGym` functionality and modularize dashboard action cards.)
                 />
               );
             })
