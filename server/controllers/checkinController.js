@@ -25,4 +25,15 @@ const getTodayCheckinStatus = async (req, res) => {
 	}
 };
 
-export default { createCheckin, getTodayCheckinStatus };
+const getLast7DaysByPact = async (req, res) => {
+	try {
+		const { pactId } = req.params;
+		const history = await Checkin.getLast7DaysByPact(pactId);
+		res.json(history);
+	} catch (err) {
+		console.error('Check-in history error:', err);
+		res.status(500).json({ error: 'Failed to fetch check-in history' });
+	}
+};
+
+export default { createCheckin, getTodayCheckinStatus, getLast7DaysByPact };

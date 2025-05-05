@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import pool from '../config/db.js';
 
 const Checkin = {
@@ -65,6 +66,43 @@ const Checkin = {
 		);
 
 		return insert.rows[0];
+	},
+	getLast7DaysByPact: async (pactId) => {
+		// Fetch pact participants
+		const pactRes = await pool.query(
+			`SELECT user1_id, user2_id FROM pacts WHERE id = $1`,
+			[pactId]
+		);
+		if (pactRes.rows.length === 0) throw new Error('Pact not found');
+
+		const { user1_id, user2_id } = pactRes.rows[0];
+
+		// Prepare date range: last 7 days
+		const today = dayjs();
+		const days = Array.from({ length: 7 }, (_, i) => today.subtract(i, 'day').format('YYYY-MM-DD')).reverse();
+
+		const history = [];
+		for (const day of days) {
+			const result = await pool.query(
+				`SELECT * FROM checkins WHERE pact_id = $1 AND checkin_date = $2`,
+				[pactId, day]
+			);
+
+			const row = {
+				date: day,
+				user1: null,
+				user2: null,
+			};
+
+			for (const entry of result.rows) {
+				if (entry.wallet_address === user1_id) row.user1 = entry;
+				if (entry.wallet_address === user2_id) row.user2 = entry;
+			}
+
+			history.push(row);
+		}
+
+		return history;
 	},
 };
 
