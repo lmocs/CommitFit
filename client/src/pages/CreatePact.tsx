@@ -1,7 +1,6 @@
 import {
   Container,
   Text,
-  TextInput,
   Button,
   Stack,
 } from '@mantine/core';
@@ -20,7 +19,6 @@ const CreatePact = () => {
   const navigate = useNavigate();
 
   const [partnerAddress, setPartnerAddress] = useState('');
-  const [partnerUsername, setPartnerUsername] = useState('');
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [stakeAmount, setStakeAmount] = useState<number | ''>('');
   const [currency, setCurrency] = useState('ETH');
@@ -34,7 +32,6 @@ const CreatePact = () => {
       await createPact({
         user1_id: walletAddress,
         user2_id: partnerAddress,
-        partnerUsername: partnerUsername,
         start_date: dayjs(startDate).format('YYYY-MM-DD'),
         end_date: dayjs(endDate).format('YYYY-MM-DD'),
         stake_amount: stakeAmount,
@@ -55,10 +52,7 @@ const CreatePact = () => {
       <Stack>
         <PartnerAutocomplete
           value={partnerAddress}
-          onChange={(address, username) => {
-            setPartnerAddress(address);
-            setPartnerUsername(username);
-          }}
+          onChange={setPartnerAddress}
         />
 
         <DatePickerInput

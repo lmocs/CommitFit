@@ -11,7 +11,6 @@ export function PartnerAutocomplete({ value, onChange }: Props) {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState(value);
   const timeoutRef = useRef<number>(-1);
 
   useEffect(() => {
@@ -36,15 +35,16 @@ export function PartnerAutocomplete({ value, onChange }: Props) {
     <Autocomplete
       label="Partner Wallet Address or Username"
       placeholder="Search by username or address"
-      value={inputValue}
+      value={value}
       data={data}
       onChange={(val) => {
-        setInputValue(val);
         setQuery(val);
 
-        const match = val.match(/\((0x[a-fA-F0-9]{40})\)$/);
+        const match = val.match(/\((0x[a-fA-F0-9]{1,40})\)$/);
         if (match) {
-          onChange(match[1]); // extract wallet_address
+          onChange(match[1]); // Matches selection
+        } else {
+          onChange(val); // Continues to display search inside field
         }
       }}
       rightSection={loading ? <Loader size={16} /> : null}
