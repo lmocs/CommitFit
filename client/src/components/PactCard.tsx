@@ -93,11 +93,7 @@ const PactCard = ({
 						lng: pos.coords.longitude,
 					});
 
-					if (result.alreadyCheckedIn) {
-						// setCheckedIn(true);
-						setCheckedIn(result.is_valid);
-						alert('Already checked in today!');
-					} else if (result.is_valid) {
+					if (result.is_valid || result.alreadyCheckedIn) {
 						setCheckedIn(true);
 					} else {
 						alert('You must be within 100m of your registered gym to check in.');
@@ -140,8 +136,10 @@ const PactCard = ({
 					<Stack gap={0}>
 						<Text fw={600}>Pact with {partnerName}</Text>
 						<Group gap={4} c="dimmed">
-							<IconCalendar size={8} />
-							<Text size="xs">{startDate} – {endDate}</Text>
+							<IconCalendar size={12} />
+							<Text size="xs">
+								{dayjs(startDate).format('MMMM D, YYYY')} – {dayjs(endDate).format('MMMM D, YYYY')}
+							</Text>
 						</Group>
 					</Stack>
 				</Group>
@@ -228,7 +226,10 @@ const PactCard = ({
 						</Table.Thead>
 						<Table.Tbody>
 							{history
-								.filter((entry) => dayjs(entry.date).isSame(dayjs(startDate), 'day'))
+								.filter((entry) =>
+									dayjs(entry.date).isSame(dayjs(startDate), 'day') ||
+									dayjs(entry.date).isAfter(dayjs(startDate), 'day')
+								)
 								.map((entry) => (
 									<Table.Tr key={entry.date}>
 										<Table.Td>{dayjs(entry.date).format('MMM D')}</Table.Td>

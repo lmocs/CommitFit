@@ -37,9 +37,8 @@ const Checkin = {
 			}
 		}
 
-		// 3. Get today's date using Postgres' local date
-		const todayResult = await pool.query(`SELECT CURRENT_DATE`);
-		const today = todayResult.rows[0].current_date;
+		// 3. Get today's date using local time.
+		const today = dayjs().format('YYYY-MM-DD');
 
 		// 4. Check if user already checked in
 		const checkExisting = await pool.query(
@@ -67,15 +66,36 @@ const Checkin = {
 
 		return insert.rows[0];
 	},
-	getLast7DaysByPact: async (pactId) => {
-		// Fetch pact participants
-		const pactRes = await pool.query(
-			`SELECT user1_id, user2_id FROM pacts WHERE id = $1`,
-			[pactId]
+
+	hasCheckedInToday: async (wallet_address, pact_id) => {
+		const today = dayjs().format('YYYY-MM-DD');
+		const result = await pool.query(
+			`SELECT 1 FROM checkins WHERE wallet_address = $1 AND pact_id = $2 AND checkin_date = $3 AND is_valid = true`,
+			[wallet_address, pact_id, today]
 		);
+		return result.rows.length > 0;
+	},
+
+	getLast7DaysByPact: async (pact_id) => {
+		// Fetch pact participants
+		console.log('pact_id: ', pact_id);
+		const pactRes = await pool.query(
+			`SELECT 
+			u1.wallet_address AS user1,
+			u2.wallet_address AS user2
+			FROM pacts p
+			JOIN users u1 ON p.user1_id = u1.wallet_address
+			JOIN users u2 ON p.user2_id = u2.wallet_address
+			WHERE p.id = $1`,
+			[pact_id]
+		);
+
+		console.log('pactRes:', pactRes.rows[0]);
 		if (pactRes.rows.length === 0) throw new Error('Pact not found');
 
-		const { user1_id, user2_id } = pactRes.rows[0];
+		const { user1, user2 } = pactRes.rows[0];
+		console.log('user1 wallet:', user1);
+		console.log('user2 wallet:', user2);
 
 		// Prepare date range: last 7 days
 		const today = dayjs();
@@ -85,23 +105,22 @@ const Checkin = {
 		for (const day of days) {
 			const result = await pool.query(
 				`SELECT * FROM checkins WHERE pact_id = $1 AND checkin_date = $2`,
-				[pactId, day]
+				[pact_id, day]
 			);
 
 			const row = {
 				date: day,
-				user1: null,
-				user2: null,
+				user1: user1,
+				user2: user2,
 			};
 
 			for (const entry of result.rows) {
-				if (entry.wallet_address === user1_id) row.user1 = entry;
-				if (entry.wallet_address === user2_id) row.user2 = entry;
+				if (entry.wallet_address === user1) row.user1 = entry;
+				if (entry.wallet_address === user2) row.user2 = entry;
 			}
 
 			history.push(row);
 		}
-
 		return history;
 	},
 };
