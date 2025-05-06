@@ -2,7 +2,6 @@ import {
   Container,
   Text,
   TextInput,
-  NumberInput,
   Button,
   Stack,
 } from '@mantine/core';
@@ -13,6 +12,7 @@ import { useWallet } from '../context/WalletContext';
 import { useNavigate } from 'react-router-dom';
 import { createPact } from '../lib/api/pact';
 import BackToDashboard from '../components/BackToDashboard';
+import { CurrencyInput } from '../components/CurrencyInput';
 
 const CreatePact = () => {
   const { walletAddress } = useWallet();
@@ -20,7 +20,8 @@ const CreatePact = () => {
 
   const [partnerAddress, setPartnerAddress] = useState('');
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
-  const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
+  const [stakeAmount, setStakeAmount] = useState<number | ''>('');
+  const [currency, setCurrency] = useState('ETH');
 
   const [startDate, endDate] = dateRange;
 
@@ -34,6 +35,7 @@ const CreatePact = () => {
         start_date: dayjs(startDate).format('YYYY-MM-DD'),
         end_date: dayjs(endDate).format('YYYY-MM-DD'),
         stake_amount: stakeAmount,
+        currency: currency,
         contract_address: '0x', // placeholder for now
       });
 
@@ -65,12 +67,11 @@ const CreatePact = () => {
           required
         />
 
-        <NumberInput
-          label="Stake Amount (ETH)"
+        <CurrencyInput
           value={stakeAmount}
-          onChange={(value) => typeof value === 'number' && setStakeAmount(value)}
-          min={0}
-          required
+          onChange={setStakeAmount}
+          currency={currency}
+          setCurrency={setCurrency}
         />
 
         <Button mt="md" onClick={handleSubmit} color="grape">

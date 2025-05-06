@@ -30,6 +30,7 @@ interface PactCardProps {
 	yourStreak: number;
 	partnerStreak: number;
 	pot: number;
+	currency: string;
 	yourCheckins: CheckinStatus[];
 	partnerCheckins: CheckinStatus[];
 	onDelete: (id: number) => void;
@@ -48,6 +49,7 @@ const PactCard = ({
 	yourStreak,
 	partnerStreak,
 	pot,
+	currency,
 	yourCheckins,
 	partnerCheckins,
 	onDelete,
@@ -73,7 +75,7 @@ const PactCard = ({
 			} catch (err) {
 				console.error('Failed to fetch check-in status:', err);
 			} finally {
-				setLoadingStatus(false); // ✅ mark as loaded
+				setLoadingStatus(false);
 			}
 		};
 		checkStatus();
@@ -143,7 +145,7 @@ const PactCard = ({
 						</Group>
 					</Stack>
 				</Group>
-				<Badge variant="filled" color="grape">{pot} ETH Pot</Badge>
+				<Badge variant="filled" color="grape">{pot} {currency} Pot</Badge>
 			</Group>
 
 			{/* Progress Winnings */}
