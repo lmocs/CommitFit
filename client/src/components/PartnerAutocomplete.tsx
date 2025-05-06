@@ -4,7 +4,7 @@ import { searchUsers } from '../lib/api/user';
 
 interface Props {
   value: string;
-  onChange: (wallet: string) => void;
+  onChange: (label: string) => void;
 }
 
 export function PartnerAutocomplete({ value, onChange }: Props) {
@@ -33,21 +33,16 @@ export function PartnerAutocomplete({ value, onChange }: Props) {
 
   return (
     <Autocomplete
-      label="Partner Wallet Address or Username"
+      label="Partner Username or Wallet Address"
       placeholder="Search by username or address"
       value={value}
       data={data}
       onChange={(val) => {
         setQuery(val);
-
-        const match = val.match(/\((0x[a-fA-F0-9]{1,40})\)$/);
-        if (match) {
-          onChange(match[1]); // Matches selection
-        } else {
-          onChange(val); // Continues to display search inside field
-        }
+        onChange(val); // Always pass full string like 'zero (0xabc...)'
       }}
       rightSection={loading ? <Loader size={16} /> : null}
+      required
     />
   );
 }

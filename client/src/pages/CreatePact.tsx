@@ -18,7 +18,7 @@ const CreatePact = () => {
   const { walletAddress } = useWallet();
   const navigate = useNavigate();
 
-  const [partnerAddress, setPartnerAddress] = useState('');
+  const [partner, setPartner] = useState('');
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [stakeAmount, setStakeAmount] = useState<number | ''>('');
   const [currency, setCurrency] = useState('ETH');
@@ -26,7 +26,13 @@ const CreatePact = () => {
   const [startDate, endDate] = dateRange;
 
   const handleSubmit = async () => {
-    if (!walletAddress || !partnerAddress || !startDate || !endDate || !stakeAmount) return;
+    const match = partner.match(/\((0x[a-fA-F0-9]{1,40})\)$/);
+    const partnerAddress = match ? match[1] : '';
+
+    if (!walletAddress || !partnerAddress || !startDate || !endDate || !stakeAmount) {
+      alert('Missing required fields');
+      return;
+    }
 
     try {
       await createPact({
@@ -51,8 +57,8 @@ const CreatePact = () => {
       <Text size="xl" fw={700} mb="md">Create a New Pact</Text>
       <Stack>
         <PartnerAutocomplete
-          value={partnerAddress}
-          onChange={setPartnerAddress}
+          value={partner}
+          onChange={setPartner}
         />
 
         <DatePickerInput
