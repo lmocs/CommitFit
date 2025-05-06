@@ -8,6 +8,7 @@ import {
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 import { useWallet } from '../context/WalletContext';
 import { useNavigate } from 'react-router-dom';
 import { createPact } from '../lib/api/pact';
@@ -18,9 +19,10 @@ const CreatePact = () => {
   const navigate = useNavigate();
 
   const [partnerAddress, setPartnerAddress] = useState('');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
+
+  const [startDate, endDate] = dateRange;
 
   const handleSubmit = async () => {
     if (!walletAddress || !partnerAddress || !startDate || !endDate || !stakeAmount) return;
@@ -29,8 +31,8 @@ const CreatePact = () => {
       await createPact({
         user1_id: walletAddress,
         user2_id: partnerAddress,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
+        start_date: dayjs(startDate).format('YYYY-MM-DD'),
+        end_date: dayjs(endDate).format('YYYY-MM-DD'),
         stake_amount: stakeAmount,
         contract_address: '0x', // placeholder for now
       });
@@ -55,16 +57,11 @@ const CreatePact = () => {
         />
 
         <DatePickerInput
-          label="Start Date"
-          value={startDate}
-          onChange={setStartDate}
-          required
-        />
-
-        <DatePickerInput
-          label="End Date"
-          value={endDate}
-          onChange={setEndDate}
+          type="range"
+          label="Select date range"
+          minDate={new Date()}
+          value={dateRange}
+          onChange={setDateRange}
           required
         />
 
