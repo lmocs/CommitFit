@@ -4,7 +4,6 @@ import pool from '../config/db.js';
 const Checkin = {
 	createCheckin: async ({ wallet_address, pact_id, lat, lng }) => {
 		// 1. Get all gyms linked to this user
-		console.log('Looking up gyms for wallet:', wallet_address);
 		const gymQuery = `
 			SELECT g.lat, g.lng FROM user_gyms ug
 			JOIN gyms g ON ug.gym_id = g.id 
@@ -78,7 +77,6 @@ const Checkin = {
 
 	getLast7DaysByPact: async (pact_id) => {
 		// Fetch pact participants
-		console.log('pact_id: ', pact_id);
 		const pactRes = await pool.query(
 			`SELECT 
 			u1.wallet_address AS user1,
@@ -90,12 +88,9 @@ const Checkin = {
 			[pact_id]
 		);
 
-		console.log('pactRes:', pactRes.rows[0]);
 		if (pactRes.rows.length === 0) throw new Error('Pact not found');
 
 		const { user1, user2 } = pactRes.rows[0];
-		console.log('user1 wallet:', user1);
-		console.log('user2 wallet:', user2);
 
 		// Prepare date range: last 7 days
 		const today = dayjs();

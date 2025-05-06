@@ -114,7 +114,7 @@ const PactCard = ({
 
 	const toggleHistory = async () => {
 		setExpanded((prev) => !prev);
-		if (!expanded && history.length === 0) {
+		if (!expanded) {
 			setLoadingHistory(true);
 			try {
 				const data = await getLast7DaysCheckins(id);
