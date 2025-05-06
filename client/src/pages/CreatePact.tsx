@@ -13,12 +13,14 @@ import { useNavigate } from 'react-router-dom';
 import { createPact } from '../lib/api/pact';
 import BackToDashboard from '../components/BackToDashboard';
 import { CurrencyInput } from '../components/CurrencyInput';
+import { PartnerAutocomplete } from '../components/PartnerAutocomplete';
 
 const CreatePact = () => {
   const { walletAddress } = useWallet();
   const navigate = useNavigate();
 
   const [partnerAddress, setPartnerAddress] = useState('');
+  const [partnerUsername, setPartnerUsername] = useState('');
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [stakeAmount, setStakeAmount] = useState<number | ''>('');
   const [currency, setCurrency] = useState('ETH');
@@ -32,6 +34,7 @@ const CreatePact = () => {
       await createPact({
         user1_id: walletAddress,
         user2_id: partnerAddress,
+        partnerUsername: partnerUsername,
         start_date: dayjs(startDate).format('YYYY-MM-DD'),
         end_date: dayjs(endDate).format('YYYY-MM-DD'),
         stake_amount: stakeAmount,
@@ -50,12 +53,12 @@ const CreatePact = () => {
       <BackToDashboard />
       <Text size="xl" fw={700} mb="md">Create a New Pact</Text>
       <Stack>
-        <TextInput
-          label="Partner Wallet Address"
-          placeholder="0xABC..."
+        <PartnerAutocomplete
           value={partnerAddress}
-          onChange={(e) => setPartnerAddress(e.currentTarget.value)}
-          required
+          onChange={(address, username) => {
+            setPartnerAddress(address);
+            setPartnerUsername(username);
+          }}
         />
 
         <DatePickerInput
