@@ -1,0 +1,7 @@
+# sc build outputs
+artifacts/
+cache/
+node_modules/
+
+# and just in case for the future
+.env
