@@ -118,6 +118,33 @@ const Checkin = {
 		}
 		return history;
 	},
+
+	getCheckinStats: async (pact_id) => {
+		const fetchIds = `SELECT user1_id, user2_id FROM pacts WHERE id = $1`
+		const ids = await pool.query(fetchIds, [pact_id]);
+
+		const { user1_id, user2_id } = ids.rows[0];
+
+		const stats = `
+				SELECT wallet_address, COUNT(*) as count
+				FROM checkins
+				WHERE pact_id = $1 AND is_valid = true
+				GROUP BY wallet_address
+			`;
+		const checkins = await pool.query(stats, [pact_id])
+
+		const counts = Object.fromEntries(checkins.rows.map(r => [r.wallet_address, Number(r.count)]));
+		console.log(counts);
+
+		const results = {
+			user1_id,
+			user2_id,
+			user1_checkins: counts[user1_id] || 0,
+			user2_checkins: counts[user2_id] || 0,
+		}
+
+		return results;
+	},
 };
 
 export default Checkin;

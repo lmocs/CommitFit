@@ -28,6 +28,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     const signer = await provider.getSigner();
     const address = await signer.getAddress();
 
+    // Should be (address, username)
     await createUser(address); // Send to backend
     setWalletAddress(address);
     localStorage.setItem('walletAddress', address);

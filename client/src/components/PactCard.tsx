@@ -7,15 +7,16 @@ import {
 	Collapse,
 	Flex,
 	Group,
-	Progress,
 	Stack,
 	Text,
 	Tooltip,
 	Loader,
 	Table,
 } from '@mantine/core';
-import { IconCalendar, IconTrophy } from '@tabler/icons-react';
+import { IconCalendar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
+import { PotSplitBar } from './PotSplitBar';
+import { getCheckinStats } from '../lib/api/checkin'; // we’ll create this next
 import { submitCheckin, getCheckinStatus, getLast7DaysCheckins } from '../lib/api/checkin';
 import { useWallet } from '../context/WalletContext';
 import dayjs from 'dayjs';
@@ -61,10 +62,35 @@ const PactCard = ({
 	const [expanded, setExpanded] = useState(false);
 	const [history, setHistory] = useState<any[]>([]);
 	const [loadingHistory, setLoadingHistory] = useState(false);
+	const [youCheckins, setYouCheckins] = useState(0);
+	const [theirCheckins, setTheirCheckins] = useState(0);
 
 	const totalStreak = yourStreak + partnerStreak || 1;
 	const yourPercent = (yourStreak / totalStreak) * 100;
 	const partnerPercent = 100 - yourPercent;
+
+	useEffect(() => {
+		const fetchStats = async () => {
+			try {
+				const stats = await getCheckinStats(id);
+				if (walletAddress === stats.user1_id) {
+					setYouCheckins(stats.user1_checkins);
+					setTheirCheckins(stats.user2_checkins);
+				} else {
+					setYouCheckins(stats.user2_checkins);
+					setTheirCheckins(stats.user1_checkins);
+				}
+			} catch (err) {
+				console.error('Failed to fetch check-in stats:', err);
+			}
+		};
+
+		fetchStats();
+	}, [id, walletAddress]);
+
+	useEffect(() => {
+		console.log("✅ Updated Check-ins", youCheckins, theirCheckins);
+	}, [youCheckins, theirCheckins]);
 
 	useEffect(() => {
 		const checkStatus = async () => {
@@ -149,24 +175,18 @@ const PactCard = ({
 			</Group>
 
 			{/* Progress Winnings */}
-			<Stack gap={4} mb="sm">
-				<Group gap={4}>
-					<IconTrophy size={14} />
-					<Text size="sm">Potential Winnings</Text>
-				</Group>
-				<Progress
-					sections={[
-						{ value: yourPercent, color: 'grape', label: `${yourPercent.toFixed(0)}% You` },
-						{ value: partnerPercent, color: 'blue', label: `${partnerPercent.toFixed(0)}% ${partnerName}` },
-					]}
-					radius="xl"
-					size="lg"
-				/>
-			</Stack>
+			<PotSplitBar
+				youLabel="You"
+				partnerLabel={partnerName}
+				yourCheckins={youCheckins}
+				partnerCheckins={theirCheckins}
+				totalPot={pot}
+				currency={currency}
+			/>
 
 			{/* Last 7 Days Check-ins */}
 			<Stack gap="xs" mt="md">
-				<Text size="xs" fw={500}>Last 7 Days</Text>
+				{/* <Text size="xs" fw={500}>Last 7 Days</Text> */}
 				<Flex justify="space-between">
 					{yourCheckins.map((status, i) => (
 						<Tooltip key={i} label="You">

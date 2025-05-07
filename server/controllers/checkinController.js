@@ -26,7 +26,6 @@ const getLast7DaysByPact = async (req, res) => {
 	try {
 		const { pact_id } = req.params;
 		const history = await Checkin.getLast7DaysByPact(pact_id);
-		// Might need to be a dict
 		res.json(history);
 	} catch (err) {
 		console.error('Check-in history error:', err);
@@ -34,4 +33,15 @@ const getLast7DaysByPact = async (req, res) => {
 	}
 };
 
-export default { createCheckin, hasCheckedInToday, getLast7DaysByPact };
+const getCheckinStats = async (req, res) => {
+	try {
+		const { pact_id } = req.params;
+		const stats = await Checkin.getCheckinStats(pact_id);
+		res.json(stats);
+	} catch (err) {
+		console.error('getCheckinStats error:', err);
+		res.status(500).json({ error: 'Failed to get check-in stats' });
+	}
+};
+
+export default { createCheckin, hasCheckedInToday, getLast7DaysByPact, getCheckinStats };

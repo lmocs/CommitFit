@@ -29,3 +29,9 @@ export const getLast7DaysCheckins = async (pactId: number) => {
 	if (!res.ok) throw new Error('Failed to fetch check-in history');
 	return res.json();
 };
+
+export const getCheckinStats = async (pactId: number) => {
+	const res = await fetch(`${API_URL}/checkin/stats/${pactId}`);
+	if (!res.ok) throw new Error('Failed to fetch check-in stats');
+	return res.json();
+};
