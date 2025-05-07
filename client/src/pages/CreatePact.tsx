@@ -1,37 +1,47 @@
 import {
   Container,
   Text,
-  TextInput,
-  NumberInput,
   Button,
   Stack,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
 import { useState } from 'react';
+import dayjs from 'dayjs';
 import { useWallet } from '../context/WalletContext';
 import { useNavigate } from 'react-router-dom';
 import { createPact } from '../lib/api/pact';
 import BackToDashboard from '../components/BackToDashboard';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { PartnerAutocomplete } from '../components/PartnerAutocomplete';
 
 const CreatePact = () => {
   const { walletAddress } = useWallet();
   const navigate = useNavigate();
 
-  const [partnerAddress, setPartnerAddress] = useState('');
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [stakeAmount, setStakeAmount] = useState<number | undefined>(undefined);
+  const [partner, setPartner] = useState('');
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [stakeAmount, setStakeAmount] = useState<number | ''>('');
+  const [currency, setCurrency] = useState('ETH');
+
+  const [startDate, endDate] = dateRange;
 
   const handleSubmit = async () => {
-    if (!walletAddress || !partnerAddress || !startDate || !endDate || !stakeAmount) return;
+    const match = partner.match(/\((0x[a-fA-F0-9]{1,40})\)$/);
+    const partnerAddress = match ? match[1] : '';
+
+    if (!walletAddress || !partnerAddress || !startDate || !endDate || !stakeAmount) {
+      alert('Missing required fields');
+      return;
+    }
 
     try {
       await createPact({
         user1_id: walletAddress,
         user2_id: partnerAddress,
-        start_date: startDate.toISOString().split('T')[0],
-        end_date: endDate.toISOString().split('T')[0],
+        start_date: dayjs(startDate).format('YYYY-MM-DD'),
+        end_date: dayjs(endDate).format('YYYY-MM-DD'),
         stake_amount: stakeAmount,
+        currency: currency,
         contract_address: '0x', // placeholder for now
       });
 
@@ -46,34 +56,25 @@ const CreatePact = () => {
       <BackToDashboard />
       <Text size="xl" fw={700} mb="md">Create a New Pact</Text>
       <Stack>
-        <TextInput
-          label="Partner Wallet Address"
-          placeholder="0xABC..."
-          value={partnerAddress}
-          onChange={(e) => setPartnerAddress(e.currentTarget.value)}
-          required
+        <PartnerAutocomplete
+          value={partner}
+          onChange={setPartner}
         />
 
         <DatePickerInput
-          label="Start Date"
-          value={startDate}
-          onChange={setStartDate}
+          type="range"
+          label="Select date range"
+          minDate={new Date()}
+          value={dateRange}
+          onChange={setDateRange}
           required
         />
 
-        <DatePickerInput
-          label="End Date"
-          value={endDate}
-          onChange={setEndDate}
-          required
-        />
-
-        <NumberInput
-          label="Stake Amount (ETH)"
+        <CurrencyInput
           value={stakeAmount}
-          onChange={(value) => typeof value === 'number' && setStakeAmount(value)}
-          min={0}
-          required
+          onChange={setStakeAmount}
+          currency={currency}
+          setCurrency={setCurrency}
         />
 
         <Button mt="md" onClick={handleSubmit} color="grape">

@@ -72,6 +72,7 @@ const Dashboard = () => {
                   startDate={pact.start_date}
                   endDate={pact.end_date}
                   pot={pact.stake_amount}
+                  currency={pact.currency}
                   yourStreak={0}
                   partnerStreak={0}
                   yourCheckins={[]}

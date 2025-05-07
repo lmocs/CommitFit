@@ -11,12 +11,9 @@ const createCheckin = async (req, res) => {
 	}
 };
 
-const getTodayCheckinStatus = async (req, res) => {
+const hasCheckedInToday = async (req, res) => {
 	try {
 		const { wallet_address, pact_id } = req.params;
-		console.log('wa: ', wallet_address);
-		console.log('pi: ', pact_id);
-		console.log('pi parsed: ', parseInt(pact_id));
 		const checkedIn = await Checkin.hasCheckedInToday(wallet_address, parseInt(pact_id));
 		res.json({ checkedIn });
 	} catch (err) {
@@ -25,4 +22,16 @@ const getTodayCheckinStatus = async (req, res) => {
 	}
 };
 
-export default { createCheckin, getTodayCheckinStatus };
+const getLast7DaysByPact = async (req, res) => {
+	try {
+		const { pact_id } = req.params;
+		const history = await Checkin.getLast7DaysByPact(pact_id);
+		// Might need to be a dict
+		res.json(history);
+	} catch (err) {
+		console.error('Check-in history error:', err);
+		res.status(500).json({ error: 'Failed to fetch check-in history' });
+	}
+};
+
+export default { createCheckin, hasCheckedInToday, getLast7DaysByPact };

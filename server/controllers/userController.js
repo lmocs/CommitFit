@@ -32,4 +32,15 @@ const createUser = async (req, res) => {
 	}
 };
 
-export default { checkUser, getUsers, createUser };
+const searchUsers = async (req, res) => {
+	try {
+		const query = req.query.q ?? "";
+		const result = await User.searchUser(query);
+		res.json(result.rows);
+	} catch (err) {
+		console.error('User search error:', err);
+		res.status(500).json({ error: 'Failed to search users' });
+	}
+};
+
+export default { checkUser, getUsers, createUser, searchUsers };

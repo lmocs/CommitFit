@@ -23,3 +23,9 @@ export const getCheckinStatus = async (walletAddress: string, pactId: number) =>
 	if (!res.ok) throw new Error('Failed to fetch check-in status');
 	return res.json();
 };
+
+export const getLast7DaysCheckins = async (pactId: number) => {
+	const res = await fetch(`${API_URL}/checkin/pact/${pactId}/last7`);
+	if (!res.ok) throw new Error('Failed to fetch check-in history');
+	return res.json();
+};

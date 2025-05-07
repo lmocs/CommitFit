@@ -46,6 +46,23 @@ const User = {
 			throw err;
 		}
 	},
+
+	searchUser: async (query) => {
+		const sql = `
+			SELECT username, wallet_address FROM users
+			WHERE username LIKE $1 OR wallet_address LIKE $1
+			LIMIT 10
+		`;
+
+		try {
+			const results = await pool.query(sql, [`%${query}%`]);
+			console.log('Search: ', results.rows);
+			return results;
+		} catch {
+			console.error('Error in searchUser:', err);
+			throw err;
+		}
+	},
 };
 
 export default User;

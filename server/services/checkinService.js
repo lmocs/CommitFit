@@ -1,9 +1,9 @@
+import dayjs from 'dayjs';
 import pool from '../config/db.js';
 
 const Checkin = {
 	createCheckin: async ({ wallet_address, pact_id, lat, lng }) => {
 		// 1. Get all gyms linked to this user
-		console.log('Looking up gyms for wallet:', wallet_address);
 		const gymQuery = `
 			SELECT g.lat, g.lng FROM user_gyms ug
 			JOIN gyms g ON ug.gym_id = g.id 
@@ -36,9 +36,8 @@ const Checkin = {
 			}
 		}
 
-		// 3. Get today's date using Postgres' local date
-		const todayResult = await pool.query(`SELECT CURRENT_DATE`);
-		const today = todayResult.rows[0].current_date;
+		// 3. Get today's date using local time.
+		const today = dayjs().format('YYYY-MM-DD');
 
 		// 4. Check if user already checked in
 		const checkExisting = await pool.query(
@@ -65,6 +64,59 @@ const Checkin = {
 		);
 
 		return insert.rows[0];
+	},
+
+	hasCheckedInToday: async (wallet_address, pact_id) => {
+		const today = dayjs().format('YYYY-MM-DD');
+		const result = await pool.query(
+			`SELECT 1 FROM checkins WHERE wallet_address = $1 AND pact_id = $2 AND checkin_date = $3 AND is_valid = true`,
+			[wallet_address, pact_id, today]
+		);
+		return result.rows.length > 0;
+	},
+
+	getLast7DaysByPact: async (pact_id) => {
+		// Fetch pact participants
+		const pactRes = await pool.query(
+			`SELECT 
+			u1.wallet_address AS user1,
+			u2.wallet_address AS user2
+			FROM pacts p
+			JOIN users u1 ON p.user1_id = u1.wallet_address
+			JOIN users u2 ON p.user2_id = u2.wallet_address
+			WHERE p.id = $1`,
+			[pact_id]
+		);
+
+		if (pactRes.rows.length === 0) throw new Error('Pact not found');
+
+		const { user1, user2 } = pactRes.rows[0];
+
+		// Prepare date range: last 7 days
+		const today = dayjs();
+		const days = Array.from({ length: 7 }, (_, i) => today.subtract(i, 'day').format('YYYY-MM-DD')).reverse();
+
+		const history = [];
+		for (const day of days) {
+			const result = await pool.query(
+				`SELECT * FROM checkins WHERE pact_id = $1 AND checkin_date = $2`,
+				[pact_id, day]
+			);
+
+			const row = {
+				date: day,
+				user1: user1,
+				user2: user2,
+			};
+
+			for (const entry of result.rows) {
+				if (entry.wallet_address === user1) row.user1 = entry;
+				if (entry.wallet_address === user2) row.user2 = entry;
+			}
+
+			history.push(row);
+		}
+		return history;
 	},
 };
 

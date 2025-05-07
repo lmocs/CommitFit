@@ -21,8 +21,9 @@ const Pact = {
 				start_date,
 				end_date,
 				stake_amount,
+				currency,
 				contract_address
-			) VALUES ($1, $2, $3, $4, $5, $6)
+			) VALUES ($1, $2, $3, $4, $5, $6, $7)
 			RETURNING *;
 		`;
 		const values = [
@@ -31,6 +32,7 @@ const Pact = {
 			pactData.start_date,
 			pactData.end_date,
 			pactData.stake_amount,
+			pactData.currency,
 			pactData.contract_address ?? '0x', // default placeholder if not provided
 		];
 
