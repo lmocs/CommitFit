@@ -1,15 +1,34 @@
-services:
-  db:
-    image: postgres:latest
-    container_name: pact_db
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: pact_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+# services:
+#  db:
+#    image: postgres:latest
+#    container_name: pact_db
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: secret
+#      POSTGRES_DB: pact_db
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#
+# volumes:
+#  postgres_data:
 
-volumes:
-  postgres_data:
+services:
+  hardhat-node:
+    build:
+      context: ./contracts
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./contracts:/app
+    command: npx hardhat node
+
+  deploy-contracts:
+    build:
+      context: ./contracts
+    depends_on:
+      - hardhat-node
+    entrypoint: ["npx", "hardhat", "run", "--network", "localhost", "scripts/deploy.js"]
+    volumes:
+      - ./contracts:/app
