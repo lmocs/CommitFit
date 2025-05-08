@@ -4,9 +4,12 @@ import {
   Button,
   Stack,
 } from '@mantine/core';
+import { IconCheck } from '@tabler/icons-react';
 import { DatePickerInput } from '@mantine/dates';
+import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import dayjs from 'dayjs';
+
 import { useWallet } from '../context/WalletContext';
 import { useNavigate } from 'react-router-dom';
 import { createPact } from '../lib/api/pact';
@@ -30,23 +33,53 @@ const CreatePact = () => {
     const partnerAddress = match ? match[1] : '';
 
     if (!walletAddress || !partnerAddress || !startDate || !endDate || !stakeAmount) {
-      alert('Missing required fields');
+      notifications.show({
+        title: 'Missing Information',
+        message: 'Please fill in all required fields before submitting.',
+        color: 'red',
+      });
       return;
     }
 
     try {
-      await createPact({
+      notifications.show({
+        id: 'create-pact',
+        loading: true,
+        title: 'Creating Pact...',
+        message: 'Deploying smart contract onchain. Please wait.',
+        autoClose: false,
+        withCloseButton: false,
+      });
+
+      const result = await createPact({
         user1_id: walletAddress,
         user2_id: partnerAddress,
         start_date: dayjs(startDate).format('YYYY-MM-DD'),
         end_date: dayjs(endDate).format('YYYY-MM-DD'),
         stake_amount: stakeAmount,
         currency: currency,
-        contract_address: '0x', // placeholder for now
+        contract_address: '0x', // Backend overwrites this placeholder
+      });
+
+      notifications.update({
+        id: 'create-pact',
+        color: 'green',
+        title: '✅ Pact Created!',
+        message: `Contract deployed to ${result.contract_address}`,
+        icon: <IconCheck size={16} />,
+        autoClose: 5000,
       });
 
       navigate('/dashboard');
     } catch (err) {
+      notifications.update({
+        id: 'create-pact',
+        color: 'red',
+        title: '❌ Pact creation failed',
+        message: 'Something went wrong while deploying your pact contract.',
+        icon: null,
+        autoClose: 5000,
+      });
       console.error('Failed to create pact:', err);
     }
   };

@@ -1,4 +1,4 @@
-import { Box, Group, Flex, Stack, Text, Tooltip } from '@mantine/core';
+import { Box, Group, Flex, Stack, Text } from '@mantine/core';
 
 interface PotSplitBarProps {
   youLabel: string;

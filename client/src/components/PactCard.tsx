@@ -13,10 +13,11 @@ import {
 	Loader,
 	Table,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { IconCalendar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { PotSplitBar } from './PotSplitBar';
-import { getCheckinStats } from '../lib/api/checkin'; // we’ll create this next
+import { getCheckinStats } from '../lib/api/checkin';
 import { submitCheckin, getCheckinStatus, getLast7DaysCheckins } from '../lib/api/checkin';
 import { useWallet } from '../context/WalletContext';
 import dayjs from 'dayjs';
@@ -123,17 +124,35 @@ const PactCard = ({
 					if (result.is_valid || result.alreadyCheckedIn) {
 						setCheckedIn(true);
 						await fetchStats();
+
+						notifications.show({
+							title: 'Successfully checked in!',
+							message: 'You have completed your quota for today.',
+							color: 'green',
+						});
 					} else {
-						alert('You must be within 100m of your registered gym to check in.');
+						notifications.show({
+							title: 'Not in range of a valid gym!',
+							message: 'You must be within 100m of one of your registered gyms to check in.',
+							color: 'red',
+						});
 					}
 				} catch (err: any) {
-					alert(err.message);
+					notifications.show({
+						title: 'Cannot check in!',
+						message: `${err.message}`,
+						color: 'red',
+					});
 				} finally {
 					setCheckingIn(false);
 				}
 			},
 			(err) => {
-				alert('Failed to get location');
+				notifications.show({
+					title: 'Failed to get location',
+					message: 'Your location could not be retrieved properly.',
+					color: 'red',
+				});
 				console.error('Check in error: ', err);
 				setCheckingIn(false);
 			}

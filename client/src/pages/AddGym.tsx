@@ -5,6 +5,7 @@ import {
   useAdvancedMarkerRef,
 } from '@vis.gl/react-google-maps';
 import { Button, Container, Loader, Stack, Text, Title } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../context/WalletContext';
@@ -24,7 +25,11 @@ const AddGym = () => {
 
   const handleSubmit = async () => {
     if (!walletAddress || !place?.geometry?.location || !place.place_id || !place.name || !place.formatted_address) {
-      alert('Please select a valid gym from the map search.');
+      notifications.show({
+        title: 'Please select a valid gym from the map search.',
+        message: 'Please fill in all required fields before submitting.',
+        color: 'red',
+      });
       return;
     }
 
@@ -41,12 +46,22 @@ const AddGym = () => {
         lat,
         lng,
       });
-      alert('Gym added successfully!');
+
+      notifications.show({
+        title: 'Gym added successfully!',
+        message: `${place.name}, ${place.formatted_address}`,
+        color: 'green',
+      });
+
       setPlace(null);
       navigate('/dashboard');
     } catch (err) {
       console.error('Failed to add gym:', err);
-      alert('Error adding gym.');
+      notifications.show({
+        title: 'Error adding gym.',
+        message: 'Something went wrong :(',
+        color: 'red',
+      });
     } finally {
       setSubmitting(false);
     }

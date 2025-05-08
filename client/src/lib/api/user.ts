@@ -21,7 +21,7 @@ export const searchUsers = async (query: string): Promise<string[]> => {
 		const users = JSON.parse(rawText);
 		return users.map((u: any) => ({
 			label: `${u.username} (${u.wallet_address})`,
-			value: u.wallet_address,  // for actual selection
+			value: u.wallet_address,
 			username: u.username,
 		}));
 	} catch (err: any) {

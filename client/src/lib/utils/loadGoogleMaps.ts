@@ -3,7 +3,6 @@ export const loadGoogleMapsApi = (apiKey: string): Promise<void> => {
 		if ((window as any).google?.maps) return resolve();
 
 		const script = document.createElement('script');
-		// script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&libraries=places&callback=initMap`;
 		script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&v=weekly&region=US`;
 		script.async = true;
 		script.defer = true;

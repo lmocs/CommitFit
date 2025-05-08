@@ -5,6 +5,7 @@ import {
   Button,
   Loader,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useEffect, useRef, useState } from 'react';
 import { loadGoogleMapsApi } from '../lib/utils/loadGoogleMaps';
 import { addGym } from '../lib/api/gym';
@@ -53,12 +54,20 @@ const AddGymCard = () => {
     setLoading(true);
     try {
       await addGym({ ...gymInfo, wallet_address: walletAddress });
-      alert('Gym added successfully!');
+      notifications.show({
+        title: 'Gym added successfully!',
+        message: `${place.name}, ${place.formatted_address}`,
+        color: 'green',
+      });
       setGymInfo(null);
       if (containerRef.current) containerRef.current.innerHTML = '';
     } catch (err) {
       console.error('Failed to add gym:', err);
-      alert('Failed to add gym');
+      notifications.show({
+        title: 'Failed to add gym',
+        message: 'Something went wrong :(',
+        color: 'red',
+      });
     } finally {
       setLoading(false);
     }
