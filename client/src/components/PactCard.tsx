@@ -69,22 +69,41 @@ const PactCard = ({
 	const yourPercent = (yourStreak / totalStreak) * 100;
 	const partnerPercent = 100 - yourPercent;
 
-	useEffect(() => {
-		const fetchStats = async () => {
-			try {
-				const stats = await getCheckinStats(id);
-				if (walletAddress === stats.user1_id) {
-					setYouCheckins(stats.user1_checkins);
-					setTheirCheckins(stats.user2_checkins);
-				} else {
-					setYouCheckins(stats.user2_checkins);
-					setTheirCheckins(stats.user1_checkins);
-				}
-			} catch (err) {
-				console.error('Failed to fetch check-in stats:', err);
-			}
-		};
+	// useEffect(() => {
+	// 	const fetchStats = async () => {
+	// 		try {
+	// 			const stats = await getCheckinStats(id);
+	// 			if (walletAddress === stats.user1_id) {
+	// 				setYouCheckins(stats.user1_checkins);
+	// 				setTheirCheckins(stats.user2_checkins);
+	// 			} else {
+	// 				setYouCheckins(stats.user2_checkins);
+	// 				setTheirCheckins(stats.user1_checkins);
+	// 			}
+	// 		} catch (err) {
+	// 			console.error('Failed to fetch check-in stats:', err);
+	// 		}
+	// 	};
+	//
+	// 	fetchStats();
+	// }, [id, walletAddress]);
 
+	const fetchStats = async () => {
+		try {
+			const stats = await getCheckinStats(id);
+			if (walletAddress === stats.user1_id) {
+				setYouCheckins(stats.user1_checkins);
+				setTheirCheckins(stats.user2_checkins);
+			} else {
+				setYouCheckins(stats.user2_checkins);
+				setTheirCheckins(stats.user1_checkins);
+			}
+		} catch (err) {
+			console.error('Failed to fetch check-in stats:', err);
+		}
+	};
+
+	useEffect(() => {
 		fetchStats();
 	}, [id, walletAddress]);
 
@@ -123,6 +142,7 @@ const PactCard = ({
 
 					if (result.is_valid || result.alreadyCheckedIn) {
 						setCheckedIn(true);
+						await fetchStats();
 					} else {
 						alert('You must be within 100m of your registered gym to check in.');
 					}
