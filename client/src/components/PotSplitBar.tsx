@@ -18,18 +18,17 @@ export const PotSplitBar = ({
   currency,
 }: PotSplitBarProps) => {
 
-  const pot = Number(totalPot);
+  totalPot = Number(totalPot);
   const total = yourCheckins + partnerCheckins;
   const base = total || 1;
 
-  let yourPercent = (yourCheckins / base) * 100;
-  let partnerPercent = 100 - yourPercent;
+  const showEqual = yourCheckins === 0 && partnerCheckins === 0;
 
-  if (!Number.isFinite(yourPercent)) yourPercent = 0;
-  if (!Number.isFinite(partnerPercent)) partnerPercent = 0;
+  const yourPercent = showEqual ? 50 : (yourCheckins / base) * 100;
+  const partnerPercent = 100 - yourPercent;
 
-  const yourAmount = (pot * yourPercent) / 100;
-  const partnerAmount = pot - yourAmount;
+  const yourAmount = (totalPot * yourPercent) / 100;
+  const partnerAmount = totalPot - yourAmount;
 
   return (
     <Stack gap={4} mt="sm">

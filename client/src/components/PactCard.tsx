@@ -65,28 +65,8 @@ const PactCard = ({
 	const [youCheckins, setYouCheckins] = useState(0);
 	const [theirCheckins, setTheirCheckins] = useState(0);
 
-	const totalStreak = yourStreak + partnerStreak || 1;
-	const yourPercent = (yourStreak / totalStreak) * 100;
-	const partnerPercent = 100 - yourPercent;
-
-	// useEffect(() => {
-	// 	const fetchStats = async () => {
-	// 		try {
-	// 			const stats = await getCheckinStats(id);
-	// 			if (walletAddress === stats.user1_id) {
-	// 				setYouCheckins(stats.user1_checkins);
-	// 				setTheirCheckins(stats.user2_checkins);
-	// 			} else {
-	// 				setYouCheckins(stats.user2_checkins);
-	// 				setTheirCheckins(stats.user1_checkins);
-	// 			}
-	// 		} catch (err) {
-	// 			console.error('Failed to fetch check-in stats:', err);
-	// 		}
-	// 	};
-	//
-	// 	fetchStats();
-	// }, [id, walletAddress]);
+	// Temporary totalPot calculation
+	pot *= 2.0;
 
 	const fetchStats = async () => {
 		try {
@@ -191,7 +171,7 @@ const PactCard = ({
 						</Group>
 					</Stack>
 				</Group>
-				<Badge variant="filled" color="grape">{pot} {currency} Pot</Badge>
+				<Badge variant="filled" color="grape">{pot.toFixed(2)} {currency} Pot</Badge>
 			</Group>
 
 			{/* Progress Winnings */}
@@ -200,7 +180,7 @@ const PactCard = ({
 				partnerLabel={partnerName}
 				yourCheckins={youCheckins}
 				partnerCheckins={theirCheckins}
-				totalPot={pot}
+				totalPot={pot.toFixed(2)}
 				currency={currency}
 			/>
 
