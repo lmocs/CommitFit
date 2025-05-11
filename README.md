@@ -1,13 +1,13 @@
-# 💪‍♂️ CommitFit
+# 💪 CommitFit
 
-Byron Tran && Logan Moreno  
+Byron Tran and Logan Moreno  
 Professor Kai Li  
 CS596 - Cryptography and Blockchain Fundamentals  
 May 11, 2025  
 
 ## 📦 Architecture
 
-CommitFit is a modern decentralized application (dApp) built to foster accountability and competitiveness in fitness routines using blockchain-backed smart contracts. It’s a full-stack application with the following architecture:
+CommitFit is a modern decentralized application (dApp) built to foster accountability and competitiveness in fitness routines using **blockchain-backed smart contracts**. It’s a full-stack application with the following architecture:
 
 ### Frontend (Client)
 - Built with **Vite + React + TypeScript**
@@ -16,7 +16,7 @@ CommitFit is a modern decentralized application (dApp) built to foster accountab
 - Communicates with backend via RESTful API routes prefixed with `/api`
 
 ### Backend (Server)
-- Node.js + Express
+- **Node.js + Express**
 - REST API with routes for users, pacts, gyms, check-ins, and smart contract actions
 - **Neon Serverless PostgreSQL database** for storing data
 - Uses **node-cron** to run scheduled tasks such as auto-finalizing expired pacts
@@ -29,8 +29,8 @@ CommitFit is a modern decentralized application (dApp) built to foster accountab
 
 ### Deployment
 - Not yet deployed for production
-- Containerized Hardhat node for development
-- Client and server to eventually be containerized with Docker Compose for production
+- **Docker** contained **Hardhat** node for development
+- Client and server to eventually be containerized with **Docker Compose** for production
 - Environment variables stored in a local `.env` (not yet using `.env.production`)
 
 ---
@@ -41,7 +41,7 @@ CommitFit offers a robust set of features to support pact-based fitness accounta
 
 ### Core Features
 1. **User Authentication**
-   - Wallet-based identity using MetaMask browser extension
+   - Wallet-based identity using **MetaMask** browser extension
    - New users are created automatically on login
    - Unique dashboards for each user
 
