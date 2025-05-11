@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import dotenv from 'dotenv';
-import PactArtifact from '../../../contracts/artifacts/contracts/Pact.sol/Pact.json' assert { type: 'json' };
+import PactArtifact from '../../../contracts/artifacts/contracts/Pact.sol/Pact.json' with { type: 'json' };
 
 dotenv.config();
 
