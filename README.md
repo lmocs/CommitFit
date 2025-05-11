@@ -1,9 +1,9 @@
-# 🏋️‍♂️ CommitFit
+# 💪‍♂️ CommitFit
 
-Byron Tran, Logan Moreno
-Professor Kai Li
-CS596 - Cryptography and Blockchain Fundamentals
-May 11, 2025
+Byron Tran && Logan Moreno  
+Professor Kai Li  
+CS596 - Cryptography and Blockchain Fundamentals  
+May 11, 2025  
 
 ## 📦 Architecture
 
@@ -153,5 +153,3 @@ CommitFit is a privacy-preserving, blockchain-powered accountability tool that:
 - Empowers users to take their goals seriously
 - Eliminates trust issues between friends
 - Uses real money and smart contracts to enforce fitness discipline
-
-```
